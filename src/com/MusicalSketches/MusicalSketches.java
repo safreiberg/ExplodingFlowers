@@ -1,6 +1,8 @@
 package com.MusicalSketches;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,13 +16,15 @@ import android.widget.Toast;
 
 public class MusicalSketches extends Activity {
 	/** Called when the activity is first created. */
+	private ArrayAdapter<String> arrayAdapter;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		ListView list1 = (ListView) findViewById(R.id.listView1);
 
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
+		arrayAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, songs);
 
 		list1.setAdapter(arrayAdapter);
@@ -58,11 +62,32 @@ public class MusicalSketches extends Activity {
 			break;
 		case SORT:
 			Toast.makeText(this, "Sorting...", Toast.LENGTH_SHORT).show();
+			java.util.Arrays.sort(songs);
+			ListView list1 = (ListView) findViewById(R.id.listView1);
+
+			arrayAdapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_1, songs);
+			
+			list1.setAdapter(arrayAdapter);
 			break;
 		case HELP:
+			createHelpDialog();
 			break;
 		}
 		return false;
+	}
+	
+	public void createHelpDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("I have no help for you here.")
+		       .setCancelable(true)
+		       .setPositiveButton("Sorry!", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	public static final int DELETE = 1;
