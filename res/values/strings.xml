@@ -3,5 +3,9 @@
 
     <string name="hello">Hello World, MusicalSketches!</string>
     <string name="app_name">ExplodingFlowers</string>
+    <string name="eigth_note">Eigth note icon</string>
+    <string name="quarter_note">Quarter note icon</string>
+    <string name="half_note">Half note icon</string>
+    <string name="more_notes_icon">More notes icon</string>
 
 </resources>

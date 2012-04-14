@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageButton
+            android:contentDescription="@string/eigth_note"
+            android:id="@+id/left_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@drawable/eigth_note" />
+        
+        <ImageButton
+            android:contentDescription="@string/quarter_note"
+            android:id="@+id/middle_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@drawable/quarter_note"
+            android:layout_toRightOf="@id/left_note" />
+        
+        <ImageButton
+            android:contentDescription="@string/half_note"
+            android:id="@+id/right_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@drawable/half_note"
+            android:layout_toRightOf="@id/middle_note" />
+        
+        <ImageButton
+            android:contentDescription="@string/more_notes_icon"
+            android:id="@+id/more_notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@drawable/half_note"
+            android:layout_toRightOf="@id/right_note" />
+        
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -38,7 +38,7 @@ public class MusicalSketches extends Activity {
 				// When clicked, show a toast with the TextView text
 				Toast.makeText(getApplicationContext(),
 						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-				Intent next = new Intent(MusicalSketches.this,NextActivity.class);
+				Intent next = new Intent(MusicalSketches.this,EditMode.class);
 				next.putExtra("title", ((TextView) view).getText());
 				startActivity(next);
 			}
