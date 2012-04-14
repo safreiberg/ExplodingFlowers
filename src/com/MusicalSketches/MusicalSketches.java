@@ -3,6 +3,7 @@ package com.MusicalSketches;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +38,9 @@ public class MusicalSketches extends Activity {
 				// When clicked, show a toast with the TextView text
 				Toast.makeText(getApplicationContext(),
 						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+				Intent next = new Intent(MusicalSketches.this,NextActivity.class);
+				next.putExtra("title", ((TextView) view).getText());
+				startActivity(next);
 			}
 		});
 	}
@@ -64,10 +68,8 @@ public class MusicalSketches extends Activity {
 			Toast.makeText(this, "Sorting...", Toast.LENGTH_SHORT).show();
 			java.util.Arrays.sort(songs);
 			ListView list1 = (ListView) findViewById(R.id.listView1);
-
 			arrayAdapter = new ArrayAdapter<String>(this,
 					android.R.layout.simple_list_item_1, songs);
-			
 			list1.setAdapter(arrayAdapter);
 			break;
 		case HELP:
