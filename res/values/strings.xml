@@ -7,5 +7,6 @@
     <string name="quarter_note">Quarter note icon</string>
     <string name="half_note">Half note icon</string>
     <string name="more_notes_icon">More notes icon</string>
+    <string name="rests">Rests</string>
 
 </resources>
