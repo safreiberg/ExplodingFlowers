@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/library_menu"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <item
+        android:id="@+id/delete"
+        android:text="DELETE"/>
+    <item
+        android:id="@+id/sort_by"
+        android:text="Sort :)"/>
+    <item
+        android:id="@+id/help"
+        android:text="HELP"/>
+
+</menu>
