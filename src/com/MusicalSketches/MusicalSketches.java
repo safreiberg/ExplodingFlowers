@@ -8,12 +8,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.Button;
+import android.view.*;
+
 
 public class MusicalSketches extends Activity {
 	/** Called when the activity is first created. */
@@ -23,28 +28,26 @@ public class MusicalSketches extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		ListView list1 = (ListView) findViewById(R.id.listView1);
-
-		arrayAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, songs);
-
-		list1.setAdapter(arrayAdapter);
-
-		list1.setTextFilterEnabled(true);
-
-		list1.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// When clicked, show a toast with the TextView text
-				Toast.makeText(getApplicationContext(),
-						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-				Intent next = new Intent(MusicalSketches.this,NextActivity.class);
-				next.putExtra("title", ((TextView) view).getText());
+		Button button = (Button) findViewById(R.id.button1);
+		
+		
+		button.setOnClickListener(new OnClickListener() {
+            
+            public void onClick(View v) {
+            	Intent next = new Intent(MusicalSketches.this,SongSelect.class);
 				startActivity(next);
-			}
-		});
-	}
+            }
+        });
 
+	}
+	
+//	@Override
+//	public void onPause(){
+//		ImageView iw = (ImageView) findViewById(R.id.background);
+//		iw.setBackgroundResource(0);
+//	}
+	
+	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -59,26 +62,6 @@ public class MusicalSketches extends Activity {
 		return true;
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case DELETE:
-			break;
-		case SORT:
-			Toast.makeText(this, "Sorting...", Toast.LENGTH_SHORT).show();
-			java.util.Arrays.sort(songs);
-			ListView list1 = (ListView) findViewById(R.id.listView1);
-			arrayAdapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_1, songs);
-			list1.setAdapter(arrayAdapter);
-			break;
-		case HELP:
-			createHelpDialog();
-			break;
-		}
-		return false;
-	}
-	
 	public void createHelpDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("I have no help for you here.")
@@ -91,13 +74,9 @@ public class MusicalSketches extends Activity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
+	
 
 	public static final int DELETE = 1;
 	public static final int SORT = 2;
 	public static final int HELP = 3;
-	public String[] songs = new String[] { "Friday, Friday",
-			"In the Good Old Summertime", "Lady Gaga Goes Nuts", "More Songs",
-			"Monday Monday", "Saturday", "Friday I'm in Love",
-			"Last Friday Night", "Manic Mondays", "Black Friday",
-			"Ruby Tuesday" };
 }

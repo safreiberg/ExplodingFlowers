@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World, MusicalSketches!</string>
     <string name="app_name">ExplodingFlowers</string>
+    <string name="KeyValues"/>
 
 </resources>
