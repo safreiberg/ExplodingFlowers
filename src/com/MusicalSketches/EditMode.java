@@ -742,7 +742,7 @@ public class EditMode extends Activity {
 	
 	public void addClefMeterKey(Song s) {
 		int clef = s.getClef();
-		if (clef == 0) {
+		if (clef == 1) {
 			((ImageView)findViewById(R.id.clef_image)).setImageResource(R.drawable.treble_clef);
 		} 
 		((TextView)findViewById(R.id.meter_text)).setText(""+s.getMeterTop()+"\n"+s.getMeterBottom());

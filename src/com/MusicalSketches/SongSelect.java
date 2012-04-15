@@ -72,8 +72,7 @@ public class SongSelect extends Activity {
             	if (button1.getSelectedItem().toString() == "Bass"){
             		//Set to bass clef.  Bass is 0
             		song.setClef(0);
-            	}
-            	else {
+            	} else {
             		//treble is 1.
             		song.setClef(1);
             	}
@@ -93,7 +92,7 @@ public class SongSelect extends Activity {
             	}
             	else {
             		String str = spinner1.getSelectedItem().toString();
-            		song.setMeter(str.charAt(0), str.charAt(2));
+            		song.setMeter(Integer.valueOf(str.substring(0,1)), Integer.valueOf(str.substring(1,2)));
             	}
             	
             	
