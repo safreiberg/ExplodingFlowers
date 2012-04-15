@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.MusicalSketches.datarep.Note;
@@ -568,6 +569,9 @@ public class EditMode extends Activity {
 			break;
 		case R.id.edit_play:
 			Toast.makeText(this, "Play...", Toast.LENGTH_SHORT).show();
+			Intent next = new Intent(EditMode.this, PlaybackMode.class);
+			next.putExtra("song object",song);
+			startActivity(next);
 			break;
 		case R.id.edit_save:
 			Toast.makeText(this, "Save...", Toast.LENGTH_SHORT).show();

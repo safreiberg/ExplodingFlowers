@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:background="#FFFFFF"
+    android:id="@+id/edit_layout"
+    android:layout_height="fill_parent" >
+    
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/music_score"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/music_score"
+        android:src="@drawable/musicbd" />
+
+    <ImageButton 
+        android:id="@+id/rewind_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:contentDescription="@string/sharp_button"
+        android:src="@drawable/rewind"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="160dp"
+        android:layout_alignParentBottom="true" />
+    <ImageButton 
+        android:id="@+id/play_pause_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:contentDescription="@string/flat_button"
+        android:layout_toRightOf="@id/rewind_button"
+        android:src="@drawable/play"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentBottom="true" />
+    <ImageButton 
+        android:id="@+id/forward_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:contentDescription="@string/natural_button"
+        android:layout_toRightOf="@id/play_pause_button"
+        android:src="@drawable/forward"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentBottom="true" />
+    
+</RelativeLayout>
