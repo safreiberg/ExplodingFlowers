@@ -1,5 +1,8 @@
 package com.MusicalSketches;
 
+import com.MusicalSketches.datarep.NoteFrequencies;
+import com.MusicalSketches.datarep.Song;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +15,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class EditMode extends Activity {
+	private Song song;
+	int notesOnScreen = 0;
+	
+	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_mode);
@@ -107,14 +115,17 @@ public class EditMode extends Activity {
 
 	public void addNote(View view) {
 		class PlacedItemTouchListener implements OnTouchListener {
+			//TODO figure out why the offsets are -23 and -140...
 			private View v;
+			private int noteNum;
 
 			public PlacedItemTouchListener() {
 				throw new RuntimeException("Unimplemented");
 			}
 
-			public PlacedItemTouchListener(View v) {
+			public PlacedItemTouchListener(View v, int noteNum) {
 				this.v = v;
+				this.noteNum = noteNum;
 			}
 
 			@Override
@@ -129,7 +140,7 @@ public class EditMode extends Activity {
 					break;
 				case MotionEvent.ACTION_UP:
 					Log.d("", "action up (modify): " + event.getRawX() + " " + event.getRawY());
-					updateNote(this.v);
+					updateNote(this.v, noteNum);
 					break;
 				case MotionEvent.ACTION_MOVE:
 					Log.d("",
@@ -141,10 +152,70 @@ public class EditMode extends Activity {
 				return true;
 			}
 		}
-		view.setOnTouchListener(new PlacedItemTouchListener(view));
+		notesOnScreen += 1;
+		view.setOnTouchListener(new PlacedItemTouchListener(view,notesOnScreen));
+		Log.d("","Pitch is: "+getPitchFromYIndex(view.getY()));
+		snapToBar(view);
+		snapLeftRight(view,notesOnScreen);
 	}
 	
-	public void updateNote(View v){
-		
+	public void updateNote(View v,int noteNum){
+		Log.d("","Pitch is: "+getPitchFromYIndex(v.getY()));
+		snapToBar(v);
+		snapLeftRight(v,noteNum);
+	}
+	
+	public double getPitchFromYIndex(float y) {
+		if (191 >= y && y > 181) {
+			return NoteFrequencies.getFrequency("e4"); 
+		} else if (181>= y && y > 171) {
+			return NoteFrequencies.getFrequency("f4"); 
+		} else if (171 >= y && y > 161) {
+			return NoteFrequencies.getFrequency("g4"); 
+		} else if (161 >= y && y > 151) {
+			return NoteFrequencies.getFrequency("a5"); 
+		} else if (151 >= y && y > 141) {
+			return NoteFrequencies.getFrequency("b5"); 
+		} else if (141 >= y && y > 131) {
+			return NoteFrequencies.getFrequency("c5"); 
+		} else if (131 >= y && y > 121) {
+			return NoteFrequencies.getFrequency("d5"); 
+		} else if (121 >= y && y > 111) {
+			return NoteFrequencies.getFrequency("e5"); 
+		} else if (111 >= y && y > 101) {
+			return NoteFrequencies.getFrequency("f5"); 
+		}
+		return -1;
+	}
+	
+	public void snapToBar(View v) {
+		double y = v.getY();
+		if (y > 191) {
+			v.setY(186);
+		} else if (191 >= y && y > 181) {
+			v.setY(186);
+		} else if (181 >= y && y > 171) {
+			v.setY(176); 
+		} else if (171 >= y && y > 161) {
+			v.setY(166); 
+		} else if (161 >= y && y > 151) {
+			v.setY(156); 
+		} else if (151 >= y && y > 141) {
+			v.setY(146); 
+		} else if (141 >= y && y > 131) {
+			v.setY(136); 
+		} else if (131 >= y && y > 121) {
+			v.setY(126); 
+		} else if (121 >= y && y > 111) {
+			v.setY(116); 
+		} else if (111 >= y && y > 101) {
+			v.setY(106); 
+		} else if (y < 101) {
+			v.setY(106); 
+		}
+	}
+	
+	public void snapLeftRight(View v, int noteNum) {
+		v.setX(10 + 100*noteNum);
 	}
 }
