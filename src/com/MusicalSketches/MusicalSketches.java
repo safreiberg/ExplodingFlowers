@@ -1,35 +1,43 @@
 package com.MusicalSketches;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.NumberPicker;
+
+import com.MusicalSketches.datarep.Library;
+import com.MusicalSketches.datarep.Note;
+import com.MusicalSketches.datarep.NoteFrequencies;
+import com.MusicalSketches.datarep.Song;
 
 public class MusicalSketches extends Activity {
 	/** Called when the activity is first created. */
 	private ArrayAdapter<String> arrayAdapter;
+	private Library library;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		ListView list1 = (ListView) findViewById(R.id.listView1);
 
+		Log.d("","Fake songs about to set up");
+		
+		setupFakeSongs();
+		
+		ListView list1 = (ListView) findViewById(R.id.listView1);
 		arrayAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, songs);
 
@@ -52,6 +60,26 @@ public class MusicalSketches extends Activity {
 				startActivity(next);
 			}
 		});
+
+	}
+
+	public void setupFakeSongs() {
+		library = new Library();
+		Song s1 = new Song();
+		Log.d("","new song make");
+		s1.setTitle("My Favorite Song");
+		Log.d("","new song title");
+		s1.addNote(new Note(NoteFrequencies.getFrequency("e4"), 0.125));
+		Log.d("","new note");
+		s1.addNote(new Note(NoteFrequencies.getFrequency("e5"), 0.25));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("a5"), 0.5));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("b5"), 0.125));
+		Log.d("","all notes");
+		library.addSong(s1);
+
+		for (Song s : library.getSongs()) {
+			songs.add(s.getTitle());
+		}
 	}
 
 	@Override
@@ -75,7 +103,12 @@ public class MusicalSketches extends Activity {
 			break;
 		case SORT:
 			Toast.makeText(this, "Sorting...", Toast.LENGTH_SHORT).show();
-			java.util.Arrays.sort(songs);
+			String[] s1 = (String[]) songs.toArray();
+			java.util.Arrays.sort(s1);
+			songs = new ArrayList<String>();
+			for (String s : s1) {
+				songs.add(s);
+			}
 			ListView list1 = (ListView) findViewById(R.id.listView1);
 			arrayAdapter = new ArrayAdapter<String>(this,
 					android.R.layout.simple_list_item_1, songs);
@@ -105,9 +138,5 @@ public class MusicalSketches extends Activity {
 	public static final int DELETE = 1;
 	public static final int SORT = 2;
 	public static final int HELP = 3;
-	public String[] songs = new String[] { "Friday, Friday",
-			"In the Good Old Summertime", "Lady Gaga Goes Nuts", "More Songs",
-			"Monday Monday", "Saturday", "Friday I'm in Love",
-			"Last Friday Night", "Manic Mondays", "Black Friday",
-			"Ruby Tuesday" };
+	public ArrayList<String> songs = new ArrayList<String>();
 }

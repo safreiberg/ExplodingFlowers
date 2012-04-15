@@ -8,7 +8,7 @@ public class Song {
 	private int tempo;
 	private int meterTop;
 	private int meterBottom;
-	private NoteSequence notes;
+	private NoteSequence notes= new NoteSequence();
 	private String title;
 	private Date date;
 	private String key;
@@ -16,6 +16,18 @@ public class Song {
 	/*
 	 * Default constructor if no arguments are passed. Date comes from
 	 */
+	public Song() {
+		this.clef = 1;
+		this.tempo = 100;
+		this.meterTop = 2;
+		this.meterBottom = 4;
+		this.title = "Untitled";
+		Date d = new Date();
+		this.date = new Date(d.getYear(), d.getMonth(), d.getDate()); // yikes!
+																		// deprecated
+		this.key = "C";
+	}
+	
 	public Song(Date date) {
 		this.clef = 1;
 		this.tempo = 100;
@@ -90,7 +102,15 @@ public class Song {
 		return this.meterBottom;
 	}
 	
-	public boolean addNote(Note n){
-		throw new RuntimeException("Unimplemented");
+	public void addNote(Note n){
+		this.notes.addNote(n);
+	}
+	
+	public void setTitle(String t) {
+		this.title = t;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 }
