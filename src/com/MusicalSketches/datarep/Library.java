@@ -29,5 +29,14 @@ public class Library {
 	public Song getSong(int index){
 		return this.songs.get(index);
 	}
+	
+	public Song getSong(String title) {
+		for (Song s : songs) {
+			if (title.compareToIgnoreCase(s.getTitle()) == 0) {
+				return s;
+			}
+		}
+		return null;
+	}
 
 }
