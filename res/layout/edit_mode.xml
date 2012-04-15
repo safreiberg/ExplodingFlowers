@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:background="#FFFFFF"
+    android:id="@+id/edit_layout"
     android:layout_height="fill_parent" >
 
     <ImageButton
@@ -86,6 +87,7 @@
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/music_score"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/music_score"
@@ -121,5 +123,10 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_alignParentBottom="true" />
-
+    
+    <ImageView 
+        android:id="@+id/float_above"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+    
 </RelativeLayout>
