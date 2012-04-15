@@ -34,6 +34,8 @@ public class MusicalLibrary extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.userlibrary);
+		setupFakeSongs();
+		
 		TextView text = (TextView) findViewById(R.id.textView1);
 		text.setText("User Library");
 		ListView list1 = (ListView) findViewById(R.id.listView1);
@@ -51,8 +53,8 @@ public class MusicalLibrary extends Activity {
 				// When clicked, show a toast with the TextView text
 				Toast.makeText(getApplicationContext(),
 						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-				Intent next = new Intent(MusicalLibrary.this,NextActivity.class);
-				next.putExtra("title", ((TextView) view).getText());
+				Intent next = new Intent(MusicalLibrary.this,EditMode.class);
+				next.putExtra("song object", library.getSong(""+((TextView) view).getText()));
 				startActivity(next);
 			}
 		});

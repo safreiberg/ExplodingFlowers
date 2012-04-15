@@ -1,8 +1,9 @@
 package com.MusicalSketches.datarep;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NoteSequence {
+public class NoteSequence implements Serializable{
 	
 	private ArrayList<Note> notes;
 	

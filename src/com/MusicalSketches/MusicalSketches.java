@@ -6,23 +6,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ImageView;
 import android.widget.Button;
-import android.view.*;
 
 
 public class MusicalSketches extends Activity {
 	/** Called when the activity is first created. */
-	private ArrayAdapter<String> arrayAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

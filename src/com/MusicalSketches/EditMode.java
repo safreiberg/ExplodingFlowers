@@ -1,13 +1,9 @@
 package com.MusicalSketches;
 
-import com.MusicalSketches.datarep.NoteFrequencies;
-import com.MusicalSketches.datarep.Song;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.widget.Toast;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,11 +12,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.Toast;
+
+import com.MusicalSketches.datarep.Note;
+import com.MusicalSketches.datarep.NoteFrequencies;
+import com.MusicalSketches.datarep.Song;
 
 public class EditMode extends Activity {
 	private Song song;
@@ -31,6 +30,10 @@ public class EditMode extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_mode);
+		
+		song = (Song)getIntent().getSerializableExtra("song object");
+		
+		Toast.makeText(getApplicationContext(), song.getTitle(), Toast.LENGTH_SHORT);
 
 		ImageButton left_note = (ImageButton) findViewById(R.id.left_note);
 		ImageButton middle_note = (ImageButton) findViewById(R.id.middle_note);
@@ -118,7 +121,47 @@ public class EditMode extends Activity {
 		flat_button.setOnTouchListener(new ButtonTouchListener(
 				R.drawable.flat_transparent, flat_button));
 		
-		
+		if (song != null ) {
+			setupInputSong(this.song);
+		}
+	}
+	
+	public void setupInputSong(Song s) {
+		for (Note n : s.getNotes().getNotes()) {
+			ImageView img = new ImageView(getApplicationContext());
+			if (n.getLength() == 0.125) {
+				img.setImageResource(R.drawable.eigth_note_transparent);
+			} else if (n.getLength() == 0.25) {
+				img.setImageResource(R.drawable.quarter_note_transparent);
+			} else if (n.getLength() == 0.5) {
+				img.setImageResource(R.drawable.half_note_transparent);
+			}
+			((ViewGroup) findViewById(R.id.edit_layout)).addView(img);
+			img.setAdjustViewBounds(true);
+			img.setMaxHeight(65);
+			img.setMaxWidth(50);
+			img.setVisibility(0);
+			if (n.getPitch() == NoteFrequencies.getFrequency("e4")){
+				img.setY(186);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("f4")) {
+				img.setY(176); 
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("g4")) {
+				img.setY(166); 
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("a5")) {
+				img.setY(156); 
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("b5")) {
+				img.setY(146); 
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("c5")) {
+				img.setY(136); 
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("d5")) {
+				img.setY(126); 
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("e5")) {
+				img.setY(116); 
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("f5")) {
+				img.setY(106); 
+			} 
+			addNote(img);
+		}
 	}
 
 	public void addNote(View view) {
