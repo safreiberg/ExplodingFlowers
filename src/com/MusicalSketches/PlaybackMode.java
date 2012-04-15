@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.MusicalSketches.EditMode.types;
@@ -34,6 +35,8 @@ public class PlaybackMode extends Activity {
 		mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.music);
 
 		song = (Song) getIntent().getSerializableExtra("song object");
+		
+		addClefMeterKey(song);
 
 		ImageButton play_pause = (ImageButton) findViewById(R.id.play_pause_button);
 		ImageButton rewind_button = (ImageButton) findViewById(R.id.rewind_button);
@@ -270,5 +273,13 @@ public class PlaybackMode extends Activity {
 			break;
 		}
 		return false;
+	}
+	
+	public void addClefMeterKey(Song s) {
+		int clef = s.getClef();
+		if (clef == 0) {
+			((ImageView)findViewById(R.id.clef_image)).setImageResource(R.drawable.treble_clef);
+		} 
+		((TextView)findViewById(R.id.meter_text)).setText(""+s.getMeterTop()+"\n"+s.getMeterBottom());
 	}
 }
