@@ -99,6 +99,7 @@ public class SongSelect extends Activity {
             	//Toast for testing attribute setting
             	Toast.makeText(getApplicationContext(), tempo.getText().toString(), 2).show();
             	Intent next = new Intent(SongSelect.this,EditMode.class);
+            	next.putExtra("song object", song);
 				startActivity(next);
             }
         });
