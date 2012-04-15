@@ -258,10 +258,12 @@ public class PlaybackMode extends Activity {
 		switch (item.getItemId()) {
 		case R.id.playback_close:
 			Toast.makeText(this, "Bye!", Toast.LENGTH_SHORT).show();
+			mediaPlayer.stop();
 			finish();
 			break;
 		case R.id.playback_edit:
 			Toast.makeText(this, "As you wish...", Toast.LENGTH_SHORT).show();
+			mediaPlayer.stop();
 			Intent next = new Intent(PlaybackMode.this, EditMode.class);
 			next.putExtra("song object", song);
 			startActivity(next);
