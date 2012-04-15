@@ -83,7 +83,7 @@ public class EditMode extends Activity {
 					break;
 				case MotionEvent.ACTION_UP:
 					Log.d("", "action up: " + event.getX() + " " + event.getY());
-					addNote(img);
+					addNote(img,this.resourceID);
 					img = null;
 					break;
 				case MotionEvent.ACTION_MOVE:
@@ -171,11 +171,11 @@ public class EditMode extends Activity {
 			} else if (n.getPitch() == NoteFrequencies.getFrequency("f5")) {
 				img.setY(106);
 			}
-			addNote(img);
+			addNote(img,0);
 		}
 	}
 
-	public void addNote(View view) {
+	public void addNote(View view,int code) {
 		class PlacedItemTouchListener implements OnTouchListener {
 			// TODO figure out why the offsets are -23 and -140...
 			private View v;
@@ -220,6 +220,23 @@ public class EditMode extends Activity {
 		Log.d("", "Pitch is: " + getPitchFromYIndex(view.getY()));
 		snapToBar(view);
 		snapLeftRight(view, notesOnScreen);
+		if (code != 0) {
+			// need to add to the song!
+			// code should be the resource associated with the note.
+			double duration = 0;
+			if (code == R.drawable.eigth_note_transparent) {
+				duration = 0.125;
+			} else if (code == R.drawable.quarter_note_transparent) {
+				duration = 0.25;
+			}else if (code == R.drawable.half_note_transparent) {
+				duration = 0.5;
+			}
+			addToSong(view, duration);
+		}
+	}
+	
+	public void addToSong(View v, double length) {
+		song.addNote(new Note(getPitchFromYIndex(v.getY()), length));
 	}
 
 	public void updateNote(View v, int noteNum) {
