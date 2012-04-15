@@ -119,4 +119,8 @@ public class Song implements Serializable{
 		return title;
 	}
 
+	public void setKey(String string) {
+		this.key = string;
+	}
+
 }

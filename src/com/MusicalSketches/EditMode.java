@@ -1,9 +1,14 @@
 package com.MusicalSketches;
 
+import com.MusicalSketches.datarep.NoteFrequencies;
+import com.MusicalSketches.datarep.Song;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.widget.Toast;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,27 +18,18 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.MusicalSketches.datarep.Note;
-import com.MusicalSketches.datarep.NoteFrequencies;
-import com.MusicalSketches.datarep.Song;
 
 public class EditMode extends Activity {
 	private Song song;
 	int notesOnScreen = 0;
-	
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_mode);
-		
-		song = (Song)getIntent().getSerializableExtra("song object");
-		
-		Toast.makeText(getApplicationContext(), song.getTitle(), Toast.LENGTH_SHORT);
 
 		ImageButton left_note = (ImageButton) findViewById(R.id.left_note);
 		ImageButton middle_note = (ImageButton) findViewById(R.id.middle_note);
@@ -120,53 +116,23 @@ public class EditMode extends Activity {
 				R.drawable.natural_transparent, natural_button));
 		flat_button.setOnTouchListener(new ButtonTouchListener(
 				R.drawable.flat_transparent, flat_button));
-		
-		if (song != null ) {
-			setupInputSong(this.song);
-		}
-	}
-	
-	public void setupInputSong(Song s) {
-		for (Note n : s.getNotes().getNotes()) {
-			ImageView img = new ImageView(getApplicationContext());
-			if (n.getLength() == 0.125) {
-				img.setImageResource(R.drawable.eigth_note_transparent);
-			} else if (n.getLength() == 0.25) {
-				img.setImageResource(R.drawable.quarter_note_transparent);
-			} else if (n.getLength() == 0.5) {
-				img.setImageResource(R.drawable.half_note_transparent);
+		dynamics_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				createDynamicsDialog();
 			}
-			((ViewGroup) findViewById(R.id.edit_layout)).addView(img);
-			img.setAdjustViewBounds(true);
-			img.setMaxHeight(65);
-			img.setMaxWidth(50);
-			img.setVisibility(0);
-			if (n.getPitch() == NoteFrequencies.getFrequency("e4")){
-				img.setY(186);
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("f4")) {
-				img.setY(176); 
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("g4")) {
-				img.setY(166); 
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("a5")) {
-				img.setY(156); 
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("b5")) {
-				img.setY(146); 
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("c5")) {
-				img.setY(136); 
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("d5")) {
-				img.setY(126); 
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("e5")) {
-				img.setY(116); 
-			} else if (n.getPitch() == NoteFrequencies.getFrequency("f5")) {
-				img.setY(106); 
-			} 
-			addNote(img);
-		}
+		});
+		
+		record_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				createRecordDialog();
+			}
+		});
+
 	}
 
 	public void addNote(View view) {
 		class PlacedItemTouchListener implements OnTouchListener {
-			//TODO figure out why the offsets are -23 and -140...
+			// TODO figure out why the offsets are -23 and -140...
 			private View v;
 			private int noteNum;
 
@@ -186,59 +152,60 @@ public class EditMode extends Activity {
 				case MotionEvent.ACTION_DOWN:
 					this.v.setX(event.getRawX() - 23);
 					this.v.setY(event.getRawY() - 140);
-					Log.d("",
-							"action down (modify): " + event.getRawX() + " " + event.getRawY());
+					Log.d("", "action down (modify): " + event.getRawX() + " "
+							+ event.getRawY());
 					break;
 				case MotionEvent.ACTION_UP:
-					Log.d("", "action up (modify): " + event.getRawX() + " " + event.getRawY());
+					Log.d("", "action up (modify): " + event.getRawX() + " "
+							+ event.getRawY());
 					updateNote(this.v, noteNum);
 					break;
 				case MotionEvent.ACTION_MOVE:
-					Log.d("",
-							"action move (modify): " + event.getRawX() + " " + event.getRawY());
-					this.v.setX(event.getRawX()-23);
-					this.v.setY(event.getRawY()-140);
+					Log.d("", "action move (modify): " + event.getRawX() + " "
+							+ event.getRawY());
+					this.v.setX(event.getRawX() - 23);
+					this.v.setY(event.getRawY() - 140);
 					break;
 				}
 				return true;
 			}
 		}
 		notesOnScreen += 1;
-		view.setOnTouchListener(new PlacedItemTouchListener(view,notesOnScreen));
-		Log.d("","Pitch is: "+getPitchFromYIndex(view.getY()));
+		view.setOnTouchListener(new PlacedItemTouchListener(view, notesOnScreen));
+		Log.d("", "Pitch is: " + getPitchFromYIndex(view.getY()));
 		snapToBar(view);
-		snapLeftRight(view,notesOnScreen);
+		snapLeftRight(view, notesOnScreen);
 	}
-	
-	public void updateNote(View v,int noteNum){
-		Log.d("","Pitch is: "+getPitchFromYIndex(v.getY()));
+
+	public void updateNote(View v, int noteNum) {
+		Log.d("", "Pitch is: " + getPitchFromYIndex(v.getY()));
 		snapToBar(v);
-		snapLeftRight(v,noteNum);
+		snapLeftRight(v, noteNum);
 	}
-	
+
 	public double getPitchFromYIndex(float y) {
 		if (191 >= y && y > 181) {
-			return NoteFrequencies.getFrequency("e4"); 
-		} else if (181>= y && y > 171) {
-			return NoteFrequencies.getFrequency("f4"); 
+			return NoteFrequencies.getFrequency("e4");
+		} else if (181 >= y && y > 171) {
+			return NoteFrequencies.getFrequency("f4");
 		} else if (171 >= y && y > 161) {
-			return NoteFrequencies.getFrequency("g4"); 
+			return NoteFrequencies.getFrequency("g4");
 		} else if (161 >= y && y > 151) {
-			return NoteFrequencies.getFrequency("a5"); 
+			return NoteFrequencies.getFrequency("a5");
 		} else if (151 >= y && y > 141) {
-			return NoteFrequencies.getFrequency("b5"); 
+			return NoteFrequencies.getFrequency("b5");
 		} else if (141 >= y && y > 131) {
-			return NoteFrequencies.getFrequency("c5"); 
+			return NoteFrequencies.getFrequency("c5");
 		} else if (131 >= y && y > 121) {
-			return NoteFrequencies.getFrequency("d5"); 
+			return NoteFrequencies.getFrequency("d5");
 		} else if (121 >= y && y > 111) {
-			return NoteFrequencies.getFrequency("e5"); 
+			return NoteFrequencies.getFrequency("e5");
 		} else if (111 >= y && y > 101) {
-			return NoteFrequencies.getFrequency("f5"); 
+			return NoteFrequencies.getFrequency("f5");
 		}
 		return -1;
 	}
-	
+
 	public void snapToBar(View v) {
 		double y = v.getY();
 		if (y > 191) {
@@ -246,28 +213,28 @@ public class EditMode extends Activity {
 		} else if (191 >= y && y > 181) {
 			v.setY(186);
 		} else if (181 >= y && y > 171) {
-			v.setY(176); 
+			v.setY(176);
 		} else if (171 >= y && y > 161) {
-			v.setY(166); 
+			v.setY(166);
 		} else if (161 >= y && y > 151) {
-			v.setY(156); 
+			v.setY(156);
 		} else if (151 >= y && y > 141) {
-			v.setY(146); 
+			v.setY(146);
 		} else if (141 >= y && y > 131) {
-			v.setY(136); 
+			v.setY(136);
 		} else if (131 >= y && y > 121) {
-			v.setY(126); 
+			v.setY(126);
 		} else if (121 >= y && y > 111) {
-			v.setY(116); 
+			v.setY(116);
 		} else if (111 >= y && y > 101) {
-			v.setY(106); 
+			v.setY(106);
 		} else if (y < 101) {
-			v.setY(106); 
+			v.setY(106);
 		}
 	}
-	
+
 	public void snapLeftRight(View v, int noteNum) {
-		v.setX(10 + 100*noteNum);
+		v.setX(10 + 100 * noteNum);
 	}
 	
 	public enum edit_menu_options {
@@ -310,25 +277,19 @@ public class EditMode extends Activity {
 	public void save() {
 		//TODO implement save
 	}
-	
-	
-	
-	public int createClefDialog() {
-		final CharSequence[] clefs = { "Treble", "Bass" };
-		final int newClef = (Integer) null;
+
+	public void createClefDialog() {
+		final CharSequence[] clefs = { "Bass", "Treble" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Choose New Clef");
 		builder.setItems(clefs, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				//Toast.makeText(getApplicationContext(), clefs[item], Toast.LENGTH_SHORT).show();
-				// newClef = item; this doesn't work - need new way to know
-				// return value. Could probably call setClef from here.
-				
+				song.setClef(item);
 			}
 		});
 
 		AlertDialog alert = builder.create();
-		return newClef;
+		alert.show();
 	}
 
 	public void createDynamicsDialog() {
@@ -337,69 +298,114 @@ public class EditMode extends Activity {
 		builder.setTitle("Choose New Dynamic");
 		builder.setItems(dynamics, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				// Toast.makeText(getApplicationContext(),
-				// dynamics[item],Toast.LENGTH_SHORT).show();
-				// newDynamic = item; this doesn't work - need new way to know
-				// return value. Could probably call setDynamic from here.
+				// Need code to change the img on the dynamics button to the
+				// selected value.
 
 			}
 		});
 
 		AlertDialog alert = builder.create();
-		// return newDynamic;
+		alert.show();
+
 	}
 
 	public void createKeyDialog() {
-		final CharSequence[] keys = { "C", "G", "D", "A", "E", "B", "F#",
-				"Db", "Ab", "Eb", "Bb", "F", "A minor", "E minor", "B minor",
+		final CharSequence[] keys = { "C", "G", "D", "A", "E", "B", "F#", "Db",
+				"Ab", "Eb", "Bb", "F", "A minor", "E minor", "B minor",
 				"F# minor", "Db minor", "Ab minor", "Eb minor", "Bb minor",
 				"F minor", "C minor", "G minor", "D minor" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Choose New Key");
 		builder.setItems(keys, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				// Toast.makeText(getApplicationContext(),
-				// dynamics[item],Toast.LENGTH_SHORT).show();
-				// newDynamic = item; this doesn't work - need new way to know
-				// return value. Could probably call setDynamic from here.
+				song.setKey((String) keys[item]); // not sure this works
 
 			}
 		});
 
 		AlertDialog alert = builder.create();
-		// return newDynamic;
+		alert.show();
 	}
 
-	// TODO: this doesn't work! I need some way of grabbing the numbers and
-	// turning them into ints. also,
-	// should we add rules to keep entries within tempo ranges (40 to about 220)
-	// public int createTempoDialog(int currentTempo) {
-	//
-	// AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	// builder.setTitle("New Tempo");
-	// final int newTempo = currentTempo;
-	// builder.set
-	//
-	// alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-	// public void onClick(DialogInterface dialog, int whichButton) {
-	// newTempo = input.getText();
-	// return;
-	// }
-	// });
-	//
-	// alert.setNegativeButton("Cancel",
-	// new DialogInterface.OnClickListener() {
-	//
-	// public void onClick(DialogInterface dialog, int which) {
-	// return;
-	// }
-	// });
-	// return newTempo;
-	// }
+	// rules to keep entries within tempo ranges (40 to about 220)
+	// implemented in song.setTempo
+	public void createTempoDialog(int currentTempo) {
+		final View layout = View.inflate(this, R.layout.tempo, null);
 
-	// public List <Integer> createMeterDialog(){
-	// AlertDialog.Builder alert = new AlertDialog.Builder(this);
-	// alert.setTitle("Choose New Meter");
-	//
-	// }
+		final EditText input = ((EditText) layout.findViewById(R.id.myEditText));
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("New Tempo");
+		builder.setView(layout);
+
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				song.setTempo(Integer
+						.valueOf(input.getText().toString().trim()));
+			}
+		});
+
+		builder.setPositiveButton("Cancel",
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						return;
+					}
+				});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	public void createMeterDialog() {
+		final View layout = View.inflate(this, R.layout.meter, null);
+
+		final EditText top = ((EditText) layout.findViewById(R.id.meterTop));
+		final EditText bottom = ((EditText) layout
+				.findViewById(R.id.meterBottom));
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("New Meter");
+		builder.setView(layout);
+
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				song.setMeter(Integer.valueOf(top.getText().toString().trim()),
+						Integer.valueOf(bottom.getText().toString().trim()));
+			}
+		});
+
+		builder.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						return;
+					}
+				});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	public void createRecordDialog() {
+		final View layout = View.inflate(this, R.layout.recording, null);
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(layout);
+		
+		final MediaRecorder recording = new android.media.MediaRecorder();
+		recording.setAudioSource(MediaRecorder.AudioSource.MIC); //can't test this with emulator because it has no mic. should work in phone
+		recording.start();
+		
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				recording.stop();
+				//need to save the recording somewhere
+			}
+		});
+		
+		
+		
+
+	}
 }
