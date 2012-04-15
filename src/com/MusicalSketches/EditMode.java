@@ -3,6 +3,7 @@ package com.MusicalSketches;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
@@ -225,6 +226,7 @@ public class EditMode extends Activity {
 		Log.d("", "Pitch is: " + getPitchFromYIndex(v.getY()));
 		snapToBar(v);
 		snapLeftRight(v, noteNum);
+		song.updateNotePitch(noteNum-1,getPitchFromYIndex(v.getY()));
 	}
 
 	public double getPitchFromYIndex(float y) {
@@ -316,7 +318,9 @@ public class EditMode extends Activity {
 	}
 
 	public void save() {
-		// TODO implement save
+		Intent i = new Intent();
+		i.putExtra("song object", song);
+		setResult(0, i);
 	}
 
 	public void createClefDialog() {

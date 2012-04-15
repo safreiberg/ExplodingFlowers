@@ -122,5 +122,9 @@ public class Song implements Serializable{
 	public void setKey(String string) {
 		this.key = string;
 	}
+	
+	public void updateNotePitch(int index, double pitch) {
+		this.notes.updateNotePitch(index, pitch);
+	}
 
 }

@@ -18,5 +18,9 @@ public class Note implements Serializable {
 	public double getLength() {
 		return length;
 	}
+	
+	public void setPitch(double pitch) {
+		this.pitch = pitch;
+	}
 
 }

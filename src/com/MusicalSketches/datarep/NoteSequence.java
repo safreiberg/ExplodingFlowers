@@ -34,5 +34,10 @@ public class NoteSequence implements Serializable{
 	public void addNote(Note n) {
 		notes.add(n);
 	}
+	
+	public void updateNotePitch(int index, double pitch) {
+		Note n = this.notes.get(index);
+		n.setPitch(pitch);
+	}
 
 }

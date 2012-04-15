@@ -35,7 +35,7 @@ public class MusicalLibrary extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.userlibrary);
 		setupFakeSongs();
-		
+
 		TextView text = (TextView) findViewById(R.id.textView1);
 		text.setText("User Library");
 		ListView list1 = (ListView) findViewById(R.id.listView1);
@@ -53,38 +53,51 @@ public class MusicalLibrary extends Activity {
 				// When clicked, show a toast with the TextView text
 				Toast.makeText(getApplicationContext(),
 						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-				Intent next = new Intent(MusicalLibrary.this,EditMode.class);
-				next.putExtra("song object", library.getSong(""+((TextView) view).getText()));
-				startActivity(next);
+				Intent next = new Intent(MusicalLibrary.this, EditMode.class);
+				next.putExtra("song object",
+						library.getSong("" + ((TextView) view).getText()));
+				startActivityForResult(next, 0);
 			}
 		});
 		Button newComp = (Button) findViewById(R.id.textView2);
 		newComp.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-            	Intent next = new Intent(MusicalLibrary.this,SongSelect.class);
-				startActivity(next);
-            }
-        });
 
-		
-		
+			public void onClick(View v) {
+				Intent next = new Intent(MusicalLibrary.this, SongSelect.class);
+				startActivity(next);
+			}
+		});
 	}
-	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 0) {
+			Song s = (Song) data.getSerializableExtra("song object");
+			library.remove(s.getTitle());
+			library.addSong(s);
+			Log.d("", "should have updated song");
+			String titles = "";
+			for (Song s1 : library.getSongs()) {
+				titles = s1.getTitle() + "; ";
+			}
+			Log.d("", titles);
+		}
+	}
+
 	public void setupFakeSongs() {
 		library = new Library();
 		Song s1 = new Song();
-		Log.d("","new song make");
+		Log.d("", "new song make");
 		s1.setTitle("My Favorite Song");
-		Log.d("","new song title");
+		Log.d("", "new song title");
 		s1.addNote(new Note(NoteFrequencies.getFrequency("e4"), 0.125));
-		Log.d("","new note");
+		Log.d("", "new note");
 		s1.addNote(new Note(NoteFrequencies.getFrequency("e5"), 0.25));
 		s1.addNote(new Note(NoteFrequencies.getFrequency("a5"), 0.5));
 		s1.addNote(new Note(NoteFrequencies.getFrequency("b5"), 0.125));
-		Log.d("","all notes");
+		Log.d("", "all notes");
 		library.addSong(s1);
-		
+
 		for (Song s : library.getSongs()) {
 			songs.add(s.getTitle());
 		}
@@ -114,7 +127,7 @@ public class MusicalLibrary extends Activity {
 			String[] s = (String[]) songs.toArray();
 			java.util.Arrays.sort(s);
 			songs = new ArrayList<String>();
-			for (String s1 : s){
+			for (String s1 : s) {
 				songs.add(s1);
 			}
 			ListView list1 = (ListView) findViewById(R.id.listView1);
@@ -128,16 +141,17 @@ public class MusicalLibrary extends Activity {
 		}
 		return false;
 	}
-	
+
 	public void createHelpDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("I have no help for you here.")
-		       .setCancelable(true)
-		       .setPositiveButton("Sorry!", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
+				.setCancelable(true)
+				.setPositiveButton("Sorry!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
