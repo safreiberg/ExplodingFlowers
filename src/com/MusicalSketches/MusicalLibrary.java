@@ -72,6 +72,9 @@ public class MusicalLibrary extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0) {
+			if (data == null) {
+				return;
+			}
 			Song s = (Song) data.getSerializableExtra("song object");
 			library.remove(s.getTitle());
 			library.addSong(s);
