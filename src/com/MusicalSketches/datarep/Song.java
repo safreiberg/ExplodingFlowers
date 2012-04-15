@@ -11,6 +11,7 @@ public class Song {
 	private NoteSequence notes;
 	private String title;
 	private Date date;
+	private String key;
 
 	/*
 	 * Default constructor if no arguments are passed. Date comes from
@@ -24,9 +25,10 @@ public class Song {
 		Date d = new Date();
 		this.date = new Date(d.getYear(), d.getMonth(), d.getDate()); // yikes!
 																		// deprecated
+		this.key = "C";
 	}
 
-	public Song(int clef, int meterTop, int meterBottom, int tempo,
+	public Song(int clef, int meterTop, int meterBottom, int tempo, String key,
 			String title, Date date) {
 		this.clef = clef;
 		this.meterTop = meterTop;
@@ -34,6 +36,7 @@ public class Song {
 		this.tempo = tempo;
 		this.title = title;
 		this.date = date;
+		this.key = key;
 	}
 
 	public void playSong() {
