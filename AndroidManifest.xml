@@ -32,7 +32,11 @@
             android:label="@string/app_name" >
             
         </activity>
-        
+       <activity
+            android:name=".EditMode"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape" >
+        </activity>
     </application>
 
 </manifest>

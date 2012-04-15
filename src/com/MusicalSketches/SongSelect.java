@@ -1,5 +1,6 @@
 package com.MusicalSketches;
 
+import java.util.Date;
 import java.util.Calendar;
 
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.view.*;
+import com.MusicalSketches.datarep.*;
 
 public class SongSelect extends Activity {
 	@Override
@@ -55,6 +57,63 @@ public class SongSelect extends Activity {
 	    adapterc.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinner1.setAdapter(adapterc);
 	    spinner1.setOnItemSelectedListener(new MyOnItemSelectedListener());
+	    
+	    //Should go to Edit mode once that is done
+	    Button setButton = (Button) findViewById(R.id.button2);
+	    setButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+            	
+            	Date d = new Date();
+            	Song song = new Song(d);
+            	
+            	//Set Clef
+            	Spinner button1 = (Spinner) findViewById(R.id.button1);
+            	if (button1.getSelectedItem().toString() == "Bass"){
+            		//Set to bass clef.  Bass is 0
+            		song.setClef(0);
+            	}
+            	else {
+            		//treble is 1.
+            		song.setClef(1);
+            	}
+            	
+            	//Set Tempo
+            	EditText tempo = (EditText) findViewById(R.id.editText2);
+            	song.setTempo(Integer.valueOf(tempo.getText().toString()));
+            	
+            	//Set Title
+            	EditText title = (EditText) findViewById(R.id.editText1);
+            	song.setTitle(title.getText().toString());
+            	
+            	//Set Meter
+            	Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
+            	if(spinner1.getPrompt().toString().length() == 4){
+            		song.setMeter(12,8);
+            	}
+            	else {
+            		String str = spinner1.getSelectedItem().toString();
+            		song.setMeter(str.charAt(0), str.charAt(2));
+            	}
+            	
+            	
+            	//Toast for testing attribute setting
+            	Toast.makeText(getApplicationContext(), tempo.getText().toString(), 2).show();
+            	Intent next = new Intent(SongSelect.this,SongSelect.class);
+				startActivity(next);
+            }
+        });
+	    
+	    //Should go back to library
+	    Button cancelButton = (Button) findViewById(R.id.button3);
+	    cancelButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+            	Intent next = new Intent(SongSelect.this,MusicalLibrary.class);
+				startActivity(next);
+            }
+        });
+	    
+	    
+	    
 	}
 	public class MyOnItemSelectedListener implements OnItemSelectedListener {
 

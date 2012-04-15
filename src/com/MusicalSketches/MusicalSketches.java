@@ -34,7 +34,7 @@ public class MusicalSketches extends Activity {
 		button.setOnClickListener(new OnClickListener() {
             
             public void onClick(View v) {
-            	Intent next = new Intent(MusicalSketches.this,SongSelect.class);
+            	Intent next = new Intent(MusicalSketches.this,MusicalLibrary.class);
 				startActivity(next);
             }
         });
