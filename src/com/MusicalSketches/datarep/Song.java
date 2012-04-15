@@ -89,4 +89,8 @@ public class Song {
 	public int getMeterBottom() {
 		return this.meterBottom;
 	}
+	
+	public boolean addNote(Note n){
+		throw new RuntimeException("Unimplemented");
+	}
 }
