@@ -9,13 +9,18 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 public class EditMode extends Activity {
 	private Song song;
@@ -220,6 +225,47 @@ public class EditMode extends Activity {
 	
 	public void snapLeftRight(View v, int noteNum) {
 		v.setX(10 + 100*noteNum);
+	}
+	
+	public enum edit_menu_options {
+		UNDO,
+		SAVE,
+		CLOSE,
+		PLAY,
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.edit_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.edit_close:
+			Toast.makeText(this, "Closing!", Toast.LENGTH_SHORT).show();
+			save();
+			finish();
+			break;
+		case R.id.edit_play:
+			Toast.makeText(this, "Play...", Toast.LENGTH_SHORT).show();
+			break;
+		case R.id.edit_save:
+			Toast.makeText(this, "Save...", Toast.LENGTH_SHORT).show();
+			save();
+			break;
+		case R.id.edit_undo:
+			Toast.makeText(this, "Undo...", Toast.LENGTH_SHORT).show();
+			break;
+		}
+		return false;
+	}
+	
+	public void save() {
+		//TODO implement save
 	}
 	
 	
