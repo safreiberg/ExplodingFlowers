@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Calendar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import android.app.Activity;
@@ -100,7 +101,7 @@ public class SongSelect extends Activity {
             	Toast.makeText(getApplicationContext(), tempo.getText().toString(), 2).show();
             	Intent next = new Intent(SongSelect.this,EditMode.class);
             	next.putExtra("song object", song);
-				startActivity(next);
+				startActivityForResult(next, 0);
             }
         });
 	    
@@ -108,14 +109,21 @@ public class SongSelect extends Activity {
 	    Button cancelButton = (Button) findViewById(R.id.button3);
 	    cancelButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-            	Intent next = new Intent(SongSelect.this,MusicalLibrary.class);
-				startActivity(next);
+            	//Intent next = new Intent(SongSelect.this,MusicalLibrary.class);
+				//startActivity(next);
+				finish();
             }
         });
-	    
-	    
-	    
+	        
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		setResult(resultCode, data);
+		finish();
+	}
+	
+	
 	public class MyOnItemSelectedListener implements OnItemSelectedListener {
 
 	    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {

@@ -32,6 +32,11 @@ public class MusicSheet extends Activity {
 		super.onResume();
 	}
 	
+	@Override
+	public void onBackPressed() {
+		finish();
+	}
+	
 	
 	
 	

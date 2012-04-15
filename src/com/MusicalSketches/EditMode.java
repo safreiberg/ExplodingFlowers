@@ -40,6 +40,8 @@ public class EditMode extends Activity {
 		setContentView(R.layout.edit_mode);
 
 		song = (Song) getIntent().getSerializableExtra("song object");
+		
+		addClefMeterKey(song);
 
 		ImageButton left_note = (ImageButton) findViewById(R.id.left_note);
 		ImageButton middle_note = (ImageButton) findViewById(R.id.middle_note);
@@ -722,7 +724,27 @@ public class EditMode extends Activity {
 				recording.stop();
 				// need to save the recording somewhere
 			}
-		});
+		});	
 
+	}
+	
+	@Override
+	public void onBackPressed() {
+		save();
+		finish();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		save();
+	}
+	
+	public void addClefMeterKey(Song s) {
+		int clef = s.getClef();
+		if (clef == 0) {
+			((ImageView)findViewById(R.id.clef_image)).setImageResource(R.drawable.treble_clef);
+		} 
+		((TextView)findViewById(R.id.meter_text)).setText(""+s.getMeterTop()+"\n"+s.getMeterBottom());
 	}
 }

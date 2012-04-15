@@ -29,6 +29,7 @@ public class MusicalLibrary extends Activity {
 	/** Called when the activity is first created. */
 	private ArrayAdapter<String> arrayAdapter;
 	private Library library;
+	private ListView list1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class MusicalLibrary extends Activity {
 
 		TextView text = (TextView) findViewById(R.id.textView1);
 		text.setText("User Library");
-		ListView list1 = (ListView) findViewById(R.id.listView1);
+		list1 = (ListView) findViewById(R.id.listView1);
 
 		arrayAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, songs);
@@ -64,7 +65,7 @@ public class MusicalLibrary extends Activity {
 
 			public void onClick(View v) {
 				Intent next = new Intent(MusicalLibrary.this, SongSelect.class);
-				startActivity(next);
+				startActivityForResult(next,0);
 			}
 		});
 	}
@@ -84,6 +85,7 @@ public class MusicalLibrary extends Activity {
 				titles = s1.getTitle() + "; ";
 			}
 			Log.d("", titles);
+			updateView();
 		}
 	}
 
@@ -93,22 +95,17 @@ public class MusicalLibrary extends Activity {
 		Log.d("", "new song make");
 		s1.setTitle("My Favorite Song");
 		Log.d("", "new song title");
-		s1.addNote(new Note(NoteFrequencies.getFrequency("e4"), 0.125,"e4"));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("e4"), 0.125, "e4"));
 		Log.d("", "new note");
-		s1.addNote(new Note(NoteFrequencies.getFrequency("e5"), 0.25,"e5"));
-		s1.addNote(new Note(NoteFrequencies.getFrequency("a4"), 0.5,"a4"));
-		s1.addNote(new Note(NoteFrequencies.getFrequency("b4"), 0.125,"b4"));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("e5"), 0.25, "e5"));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("a4"), 0.5, "a4"));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("b4"), 0.125, "b4"));
 		Log.d("", "all notes");
 		library.addSong(s1);
 
 		for (Song s : library.getSongs()) {
 			songs.add(s.getTitle());
 		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
 	}
 
 	@Override
@@ -163,4 +160,36 @@ public class MusicalLibrary extends Activity {
 	public static final int SORT = 2;
 	public static final int HELP = 3;
 	public ArrayList<String> songs = new ArrayList<String>();
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d("","resuming musical library");
+		Intent i = getIntent();
+		if (i != null) {
+			Song s = (Song) i.getSerializableExtra("song object");
+			if (s != null) {
+				Log.d("","retrieved a non-null song on resume");
+				library.remove(s.getTitle());
+				library.addSong(s);
+				Log.d("", "should have updated song");
+				String titles = "";
+				for (Song s1 : library.getSongs()) {
+					titles = s1.getTitle() + "; ";
+				}
+				Log.d("", titles);
+				updateView();
+			}
+		}
+	}
+	
+	public void updateView() {
+		songs = new ArrayList<String>();
+		for (Song i : this.library.getSongs()) {
+			songs.add(i.getTitle());
+		}
+		arrayAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, songs);
+		list1.setAdapter(arrayAdapter);
+	}
 }
