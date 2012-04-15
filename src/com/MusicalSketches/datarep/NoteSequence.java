@@ -40,4 +40,9 @@ public class NoteSequence implements Serializable{
 		n.setPitch(pitch);
 	}
 
+	public void updateNoteName(int index, String name) {
+		Note n = this.notes.get(index);
+		n.setName(name);
+	}
+
 }

@@ -126,5 +126,13 @@ public class Song implements Serializable{
 	public void updateNotePitch(int index, double pitch) {
 		this.notes.updateNotePitch(index, pitch);
 	}
+	
+	public void updateNoteName(int index, String name) {
+		this.notes.updateNoteName(index, name);
+	}
+	
+	public Note getNoteNum(int index) {
+		return this.notes.getNotes().get(index);
+	}
 
 }

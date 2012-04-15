@@ -90,11 +90,11 @@ public class MusicalLibrary extends Activity {
 		Log.d("", "new song make");
 		s1.setTitle("My Favorite Song");
 		Log.d("", "new song title");
-		s1.addNote(new Note(NoteFrequencies.getFrequency("e4"), 0.125));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("e4"), 0.125,"e4"));
 		Log.d("", "new note");
-		s1.addNote(new Note(NoteFrequencies.getFrequency("e5"), 0.25));
-		s1.addNote(new Note(NoteFrequencies.getFrequency("a5"), 0.5));
-		s1.addNote(new Note(NoteFrequencies.getFrequency("b5"), 0.125));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("e5"), 0.25,"e5"));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("a4"), 0.5,"a4"));
+		s1.addNote(new Note(NoteFrequencies.getFrequency("b4"), 0.125,"b4"));
 		Log.d("", "all notes");
 		library.addSong(s1);
 

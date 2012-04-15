@@ -124,9 +124,15 @@
         android:layout_marginLeft="10dp"
         android:layout_alignParentBottom="true" />
     
-    <ImageView 
-        android:id="@+id/float_above"
+    <ImageButton
+        android:id="@+id/trash_can"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content" />
+        android:layout_width="wrap_content"
+        android:contentDescription="@string/natural_button"
+        android:src="@drawable/trash"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
     
 </RelativeLayout>

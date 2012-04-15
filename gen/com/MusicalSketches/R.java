@@ -35,6 +35,7 @@ public final class R {
         public static final int sharp_transparent=0x7f020010;
         public static final int slur=0x7f020011;
         public static final int splash=0x7f020012;
+        public static final int trash=0x7f020013;
     }
     public static final class id {
         public static final int background=0x7f07000e;
@@ -51,7 +52,6 @@ public final class R {
         public static final int edit_save=0x7f070020;
         public static final int edit_undo=0x7f07001f;
         public static final int flat_button=0x7f07000b;
-        public static final int float_above=0x7f07000d;
         public static final int help=0x7f070025;
         public static final int left_note=0x7f070001;
         public static final int library_menu=0x7f07001e;
@@ -75,6 +75,7 @@ public final class R {
         public static final int textView2=0x7f070013;
         public static final int textView3=0x7f070017;
         public static final int textView4=0x7f070019;
+        public static final int trash_can=0x7f07000d;
     }
     public static final class layout {
         public static final int edit_mode=0x7f030000;
