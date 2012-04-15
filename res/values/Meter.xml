@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="meter">Set Your Meter!</string>
+    <string-array name="meter_array">
+        <item>4/4</item>
+        <item>3/4</item>
+        <item>2/4</item>
+        <item>6/8</item>
+        <item>9/8</item>
+        <item>12/8</item>
+        <item>2/2</item>
+    </string-array>
+</resources>

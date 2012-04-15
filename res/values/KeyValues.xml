@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="planet_prompt">Set Your Key!</string>
+    <string-array name="planets_array">
+        <item>C</item>
+        <item>G</item>
+        <item>D</item>
+        <item>A</item>
+        <item>E</item>
+        <item>B</item>
+        <item>F#</item>
+        <item>Db</item>
+        <item>Ab</item>
+        <item>Eb</item>
+        <item>Bb</item>
+        <item>F</item>
+        <item>A minor</item>
+        <item>E minor</item>
+        <item>B minor</item>
+        <item>F# minor</item>
+        <item>C# minor</item>
+        <item>G# minor</item>
+        <item>D# minor</item>
+        <item>Bb minor</item>
+        <item>F minor</item>
+        <item>C minor</item>
+        <item>G minor</item>
+        <item>D minor</item>
+        
+    </string-array>
+</resources>
