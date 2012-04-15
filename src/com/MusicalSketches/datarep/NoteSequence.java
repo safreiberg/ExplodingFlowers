@@ -10,6 +10,10 @@ public class NoteSequence {
 		this.notes = notes;
 	}
 	
+	public NoteSequence() {
+		this.notes = new ArrayList<Note>();
+	}
+	
 	public void addNote(int index, Note n){
 		notes.add(index, n);
 	}
@@ -24,6 +28,10 @@ public class NoteSequence {
 	
 	public ArrayList<Note> getNotes(){
 		return this.notes;
+	}
+	
+	public void addNote(Note n) {
+		notes.add(n);
 	}
 
 }

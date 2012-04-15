@@ -2,6 +2,8 @@ package com.MusicalSketches.datarep;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 public class Library {
 	
 	private ArrayList<Song> songs;
@@ -9,10 +11,14 @@ public class Library {
 	public Library(ArrayList <Song> s){
 		this.songs = s;
 	}
+	public Library() {
+		this.songs = new ArrayList<Song>();
+	}
 	
 	//sorting methods?
 	
 	public void addSong(Song s){
+		Log.d("","Song added");
 		this.songs.add(s);
 	}
 	
