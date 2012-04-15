@@ -7,7 +7,7 @@
         android:id="@+id/background"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/splash" />
+        android:background="@drawable/BetterSplash" />
 
     <TextView
         android:id="@+id/textView1"
