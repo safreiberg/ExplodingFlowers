@@ -1,14 +1,10 @@
 package com.MusicalSketches;
 
-import com.MusicalSketches.datarep.NoteFrequencies;
-import com.MusicalSketches.datarep.Song;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.widget.Toast;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +17,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.MusicalSketches.datarep.Note;
+import com.MusicalSketches.datarep.NoteFrequencies;
+import com.MusicalSketches.datarep.Song;
 
 public class EditMode extends Activity {
 	private Song song;
@@ -30,6 +31,8 @@ public class EditMode extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_mode);
+
+		song = (Song) getIntent().getSerializableExtra("song object");
 
 		ImageButton left_note = (ImageButton) findViewById(R.id.left_note);
 		ImageButton middle_note = (ImageButton) findViewById(R.id.middle_note);
@@ -121,13 +124,54 @@ public class EditMode extends Activity {
 				createDynamicsDialog();
 			}
 		});
-		
+
 		record_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				createRecordDialog();
 			}
 		});
 
+		updateFromLoadedSong(song);
+
+	}
+
+	public void updateFromLoadedSong(Song song) {
+		for (Note n : song.getNotes().getNotes()) {
+			ImageView img;
+			img = new ImageView(getApplicationContext());
+			if (n.getLength() == 0.125) {
+				img.setImageResource(R.drawable.eigth_note_transparent);
+			} else if (n.getLength() == 0.25) {
+				img.setImageResource(R.drawable.quarter_note_transparent);
+			} else if (n.getLength() == 0.5) {
+				img.setImageResource(R.drawable.half_note_transparent);
+			}
+			img.setAdjustViewBounds(true);
+			img.setMaxHeight(65);
+			img.setMaxWidth(50);
+			img.setVisibility(0);
+			((ViewGroup) findViewById(R.id.edit_layout)).addView(img);
+			if (n.getPitch() == NoteFrequencies.getFrequency("e4")) {
+				img.setY(186);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("f4")) {
+				img.setY(176);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("g4")) {
+				img.setY(166);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("a5")) {
+				img.setY(156);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("b5")) {
+				img.setY(146);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("c5")) {
+				img.setY(136);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("d5")) {
+				img.setY(126);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("e5")) {
+				img.setY(116);
+			} else if (n.getPitch() == NoteFrequencies.getFrequency("f5")) {
+				img.setY(106);
+			}
+			addNote(img);
+		}
 	}
 
 	public void addNote(View view) {
@@ -236,19 +280,16 @@ public class EditMode extends Activity {
 	public void snapLeftRight(View v, int noteNum) {
 		v.setX(10 + 100 * noteNum);
 	}
-	
+
 	public enum edit_menu_options {
-		UNDO,
-		SAVE,
-		CLOSE,
-		PLAY,
+		UNDO, SAVE, CLOSE, PLAY,
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.edit_menu, menu);
+		inflater.inflate(R.menu.edit_menu, menu);
 		return true;
 	}
 
@@ -273,9 +314,9 @@ public class EditMode extends Activity {
 		}
 		return false;
 	}
-	
+
 	public void save() {
-		//TODO implement save
+		// TODO implement save
 	}
 
 	public void createClefDialog() {
@@ -389,23 +430,28 @@ public class EditMode extends Activity {
 
 	public void createRecordDialog() {
 		final View layout = View.inflate(this, R.layout.recording, null);
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(layout);
-		
+
 		final MediaRecorder recording = new android.media.MediaRecorder();
-		recording.setAudioSource(MediaRecorder.AudioSource.MIC); //can't test this with emulator because it has no mic. should work in phone
+		recording.setAudioSource(MediaRecorder.AudioSource.MIC); // can't test
+																	// this with
+																	// emulator
+																	// because
+																	// it has no
+																	// mic.
+																	// should
+																	// work in
+																	// phone
 		recording.start();
-		
+
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				recording.stop();
-				//need to save the recording somewhere
+				// need to save the recording somewhere
 			}
 		});
-		
-		
-		
 
 	}
 }
