@@ -1,19 +1,24 @@
 package com.MusicalSketches;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.NumberPicker;
 
 public class MusicalSketches extends Activity {
 	/** Called when the activity is first created. */
@@ -38,6 +43,9 @@ public class MusicalSketches extends Activity {
 				// When clicked, show a toast with the TextView text
 				Toast.makeText(getApplicationContext(),
 						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+				//Intent next = new Intent(MusicalSketches.this,
+						//NextActivity.class);
+				//Intent next = new Intent(MusicalSketches.this,EditMode.class);
 				Intent next = new Intent(MusicalSketches.this,EditMode.class);
 				next.putExtra("title", ((TextView) view).getText());
 				startActivity(next);
@@ -78,19 +86,87 @@ public class MusicalSketches extends Activity {
 		}
 		return false;
 	}
-	
+
 	public void createHelpDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("I have no help for you here.")
-		       .setCancelable(true)
-		       .setPositiveButton("Sorry!", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
+				.setCancelable(true)
+				.setPositiveButton("Sorry!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
+
+	public int createClefDialog() {
+		final CharSequence[] clefs = { "Treble", "Bass" };
+		final int newClef = (Integer) null;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Choose New Clef");
+		builder.setItems(clefs, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				Toast.makeText(getApplicationContext(), clefs[item],
+						Toast.LENGTH_SHORT).show();
+				//newClef = item; this doesn't work - need new way to know return value. Could probably call setClef from here. 
+			}
+		});
+
+		AlertDialog alert = builder.create();
+		return newClef;
+	}
+	
+	public int createDynamicsDialog() {
+		final CharSequence[] dynamics = { "pp", "p", "mp", "mf", "f", "ff" };
+		int newDynamic = (Integer) null;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Choose New Clef");
+		builder.setItems(dynamics, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				Toast.makeText(getApplicationContext(), dynamics[item],
+						Toast.LENGTH_SHORT).show();
+				//newDynamic = item; this doesn't work - need new way to know return value. Could probably call setDynamic from here. 
+			}
+		});
+
+		AlertDialog alert = builder.create();
+		return newDynamic;
+	}
+
+	// TODO: this doesn't work! I need some way of grabbing the numbers and
+	// turning them into ints. also,
+	// should we add rules to keep entries within tempo ranges (40 to about 220)
+//	public int createTempoDialog(int currentTempo) {
+//
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		builder.setTitle("New Tempo");
+//		final int newTempo = currentTempo;
+//		builder.set
+//
+//		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int whichButton) {
+//				newTempo = input.getText();
+//				return;
+//			}
+//		});
+//
+//		alert.setNegativeButton("Cancel",
+//				new DialogInterface.OnClickListener() {
+//
+//					public void onClick(DialogInterface dialog, int which) {
+//						return;
+//					}
+//				});
+//		return newTempo;
+//	}
+	
+//	public List <Integer> createMeterDialog(){
+//		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+//		alert.setTitle("Choose New Meter");
+//		 
+//	}
 
 	public static final int DELETE = 1;
 	public static final int SORT = 2;
