@@ -69,7 +69,7 @@ public class SongSelect extends Activity {
             	
             	//Set Clef
             	Spinner button1 = (Spinner) findViewById(R.id.button1);
-            	if (button1.getSelectedItem().toString() == "Bass"){
+            	if (button1.getSelectedItem().toString().equalsIgnoreCase("Bass")){
             		//Set to bass clef.  Bass is 0
             		song.setClef(0);
             	} else {
@@ -87,12 +87,13 @@ public class SongSelect extends Activity {
             	
             	//Set Meter
             	Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
-            	if(spinner1.getPrompt().toString().length() == 4){
+            	if(spinner1.getSelectedItem().toString().length() >= 4){
             		song.setMeter(12,8);
-            	}
-            	else {
+            		Log.d("","Meter: " + spinner1.getSelectedItem().toString());
+            	} else {
             		String str = spinner1.getSelectedItem().toString();
-            		song.setMeter(Integer.valueOf(str.substring(0,1)), Integer.valueOf(str.substring(1,2)));
+            		Log.d("","Meter (should be less than 12/8): " + str);
+            		song.setMeter(Integer.valueOf(str.substring(0,1)), Integer.valueOf(str.substring(2,3)));
             	}
             	
             	

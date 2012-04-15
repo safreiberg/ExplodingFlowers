@@ -25,47 +25,50 @@ public class PlaybackMode extends Activity {
 	Song song;
 	int notesOnScreen = 0;
 	int state = 0;
-	MediaPlayer mediaPlayer; 
-	
+	MediaPlayer mediaPlayer;
+	ImageView arrow;
+	int[] arrowLocations = new int[] { 110, 210, 310, 410, 510, 610 };
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.playback_mode);
-		
-		mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.music);
+
+		mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.music);
 
 		song = (Song) getIntent().getSerializableExtra("song object");
-		
+		arrow = (ImageView)findViewById(R.id.arrow_indicator);
 		addClefMeterKey(song);
 
 		ImageButton play_pause = (ImageButton) findViewById(R.id.play_pause_button);
 		ImageButton rewind_button = (ImageButton) findViewById(R.id.rewind_button);
 		ImageButton forward_button = (ImageButton) findViewById(R.id.forward_button);
-		
+
 		play_pause.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				ImageButton b =(ImageButton)findViewById(R.id.play_pause_button); 
+				ImageButton b = (ImageButton) findViewById(R.id.play_pause_button);
 				if (state == 0) {
 					state = 1;
 					b.setImageResource(R.drawable.pause);
 					mediaPlayer.start();
+					playArrows();
 				} else {
-					state =0 ;
+					state = 0;
 					b.setImageResource(R.drawable.play);
 					mediaPlayer.pause();
 				}
 			}
 		});
-		
+
 		rewind_button.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()-5000);
+				mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 5000);
 			}
 		});
-		
+
 		forward_button.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()+5000);
+				mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 5000);
 			}
 		});
 
@@ -274,12 +277,17 @@ public class PlaybackMode extends Activity {
 		}
 		return false;
 	}
-	
+
 	public void addClefMeterKey(Song s) {
 		int clef = s.getClef();
 		if (clef == 1) {
-			((ImageView)findViewById(R.id.clef_image)).setImageResource(R.drawable.treble_clef);
-		} 
-		((TextView)findViewById(R.id.meter_text)).setText(""+s.getMeterTop()+"\n"+s.getMeterBottom());
+			((ImageView) findViewById(R.id.clef_image))
+					.setImageResource(R.drawable.treble_clef);
+		}
+		((TextView) findViewById(R.id.meter_text)).setText("" + s.getMeterTop()
+				+ "\n" + s.getMeterBottom());
+	}
+	
+	public void playArrows() {
 	}
 }

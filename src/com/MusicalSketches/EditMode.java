@@ -31,7 +31,7 @@ public class EditMode extends Activity {
 	int notesOnScreen = 0;
 
 	public enum types {
-		note, annotation, sharp, flat,natural
+		note, annotation, sharp, flat, natural
 	};
 
 	@Override
@@ -40,7 +40,7 @@ public class EditMode extends Activity {
 		setContentView(R.layout.edit_mode);
 
 		song = (Song) getIntent().getSerializableExtra("song object");
-		
+
 		addClefMeterKey(song);
 
 		ImageButton left_note = (ImageButton) findViewById(R.id.left_note);
@@ -66,10 +66,6 @@ public class EditMode extends Activity {
 			private int offsetX;
 			private int offsetY;
 			private types code;
-
-			public ButtonTouchListener() {
-				throw new RuntimeException("Unimplemented");
-			}
 
 			// draws the given resourceID
 			public ButtonTouchListener(int resourceID, View v,
@@ -100,7 +96,7 @@ public class EditMode extends Activity {
 						addAnnotation(img, types.sharp);
 					} else if (this.code == types.flat) {
 						addAnnotation(img, types.flat);
-					}  else if (this.code == types.natural) {
+					} else if (this.code == types.natural) {
 						addAnnotation(img, types.natural);
 					}
 					img = null;
@@ -136,8 +132,7 @@ public class EditMode extends Activity {
 		sharp_button.setOnTouchListener(new ButtonTouchListener(
 				R.drawable.sharp_transparent, sharp_button, types.sharp));
 		natural_button.setOnTouchListener(new ButtonTouchListener(
-				R.drawable.natural_transparent, natural_button,
-				types.natural));
+				R.drawable.natural_transparent, natural_button, types.natural));
 		flat_button.setOnTouchListener(new ButtonTouchListener(
 				R.drawable.flat_transparent, flat_button, types.flat));
 		dynamics_button.setOnClickListener(new View.OnClickListener() {
@@ -241,10 +236,6 @@ public class EditMode extends Activity {
 			float startx;
 			float starty;
 
-			public PlacedItemTouchListener() {
-				throw new RuntimeException("Unimplemented");
-			}
-
 			public PlacedItemTouchListener(View v, types t) {
 				this.v = v;
 				this.t = t;
@@ -275,7 +266,7 @@ public class EditMode extends Activity {
 						} else if (noteNum >= notesOnScreen) {
 							noteNum = notesOnScreen - 1;
 						}
-						deleteAnnotation(this.v,noteNum);
+						deleteAnnotation(this.v, noteNum);
 					} else {
 						int noteNum = getNoteNumFromX(startx);
 						if (noteNum < 0) {
@@ -283,7 +274,7 @@ public class EditMode extends Activity {
 						} else if (noteNum >= notesOnScreen) {
 							noteNum = notesOnScreen - 1;
 						}
-						deleteAnnotation(this.v,noteNum);
+						deleteAnnotation(this.v, noteNum);
 						updateAnnotation(this.v, t);
 					}
 					break;
@@ -373,7 +364,7 @@ public class EditMode extends Activity {
 				duration = 0.5;
 			}
 			notesOnScreen++;
-			snapLeftRight(view, notesOnScreen);
+			snapLeftRight(view, notesOnScreen-1);
 			addToSong(view, duration);
 		}
 	}
@@ -404,10 +395,11 @@ public class EditMode extends Activity {
 					+ "natural");
 		}
 	}
-	
-	public void deleteAnnotation(View view ,int noteNum) {
-		song.updateNoteName(noteNum, song.getNoteNum(noteNum).getName().substring(0, 2));
-		Log.d("","Deleted annotation: " + noteNum);
+
+	public void deleteAnnotation(View view, int noteNum) {
+		song.updateNoteName(noteNum, song.getNoteNum(noteNum).getName()
+				.substring(0, 2));
+		Log.d("", "Deleted annotation: " + noteNum);
 	}
 
 	public void deleteNote(int noteNum) {
@@ -550,7 +542,7 @@ public class EditMode extends Activity {
 	}
 
 	public enum edit_menu_options {
-		UNDO, SAVE, CLOSE, PLAY,
+		DELETE, SAVE, CLOSE, PLAY,
 	}
 
 	@Override
@@ -572,18 +564,43 @@ public class EditMode extends Activity {
 		case R.id.edit_play:
 			Toast.makeText(this, "Play...", Toast.LENGTH_SHORT).show();
 			Intent next = new Intent(EditMode.this, PlaybackMode.class);
-			next.putExtra("song object",song);
+			next.putExtra("song object", song);
 			startActivity(next);
 			break;
 		case R.id.edit_save:
 			Toast.makeText(this, "Save...", Toast.LENGTH_SHORT).show();
 			save();
 			break;
-		case R.id.edit_undo:
-			Toast.makeText(this, "Undo...", Toast.LENGTH_SHORT).show();
+		case R.id.edit_delete:
+			Toast.makeText(this, "Deleting...", Toast.LENGTH_SHORT).show();
+			createAreYouSure();
 			break;
 		}
 		return false;
+	}
+
+	public void createAreYouSure() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure??")
+				.setCancelable(true)
+				.setPositiveButton("Yes!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								Intent i = new Intent();
+								i.putExtra("song object", song);
+								setResult(1, i);// 1 is delete
+								finish();
+							}
+						})
+				.setNegativeButton("No!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	public void save() {
@@ -612,9 +629,7 @@ public class EditMode extends Activity {
 		builder.setTitle("Choose New Dynamic");
 		builder.setItems(dynamics, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				// Need code to change the img on the dynamics button to the
-				// selected value.
-
+				((Button)findViewById(R.id.dynamics_button)).setText(dynamics[item]);
 			}
 		});
 
@@ -724,27 +739,29 @@ public class EditMode extends Activity {
 				recording.stop();
 				// need to save the recording somewhere
 			}
-		});	
+		});
 
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		save();
 		finish();
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
 		save();
 	}
-	
+
 	public void addClefMeterKey(Song s) {
 		int clef = s.getClef();
 		if (clef == 1) {
-			((ImageView)findViewById(R.id.clef_image)).setImageResource(R.drawable.treble_clef);
-		} 
-		((TextView)findViewById(R.id.meter_text)).setText(""+s.getMeterTop()+"\n"+s.getMeterBottom());
+			((ImageView) findViewById(R.id.clef_image))
+					.setImageResource(R.drawable.treble_clef);
+		}
+		((TextView) findViewById(R.id.meter_text)).setText("" + s.getMeterTop()
+				+ "\n" + s.getMeterBottom());
 	}
 }

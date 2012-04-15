@@ -5,8 +5,8 @@
     android:layout_height="fill_parent" >
 
     <item
-        android:id="@+id/edit_undo"
-        android:title="Undo"
+        android:id="@+id/edit_delete"
+        android:title="Delete"
         />
     <item
         android:id="@+id/edit_save"

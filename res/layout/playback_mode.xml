@@ -13,6 +13,17 @@
         android:layout_centerVertical="true"
         android:contentDescription="@string/music_score"
         android:src="@drawable/musicbd" />
+    
+     <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/arrow_indicator"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@string/music_score"
+        android:src="@drawable/arrow" />
 
     <ImageButton 
         android:id="@+id/rewind_button"

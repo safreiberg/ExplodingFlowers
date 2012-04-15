@@ -1,9 +1,16 @@
 package com.MusicalSketches;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,16 +42,13 @@ public class MusicalLibrary extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.userlibrary);
-		setupFakeSongs();
-
+				
 		TextView text = (TextView) findViewById(R.id.textView1);
 		text.setText("User Library");
 		list1 = (ListView) findViewById(R.id.listView1);
 
-		arrayAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, songs);
-
-		list1.setAdapter(arrayAdapter);
+		regenerateStoredLibrary();
+		updateView();
 
 		list1.setTextFilterEnabled(true);
 
@@ -65,14 +69,14 @@ public class MusicalLibrary extends Activity {
 
 			public void onClick(View v) {
 				Intent next = new Intent(MusicalLibrary.this, SongSelect.class);
-				startActivityForResult(next,0);
+				startActivityForResult(next, 0);
 			}
 		});
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 0) {
+		if (resultCode == 0) {
 			if (data == null) {
 				return;
 			}
@@ -80,11 +84,14 @@ public class MusicalLibrary extends Activity {
 			library.remove(s.getTitle());
 			library.addSong(s);
 			Log.d("", "should have updated song");
-			String titles = "";
-			for (Song s1 : library.getSongs()) {
-				titles = s1.getTitle() + "; ";
-			}
-			Log.d("", titles);
+			updateView();
+		} else if (resultCode == 1) {
+			// delete
+			if (data == null) {
+				return;
+			} 
+			Song s = (Song) data.getSerializableExtra("song object");
+			library.remove(s.getTitle());
 			updateView();
 		}
 	}
@@ -111,9 +118,9 @@ public class MusicalLibrary extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, DELETE, Menu.NONE, "DELETE");
-		menu.add(Menu.NONE, SORT, Menu.NONE, "SORT");
-		menu.add(Menu.NONE, HELP, Menu.NONE, "HELP!!!");
+		menu.add(Menu.NONE, DELETE, Menu.NONE, "Delete All");
+		menu.add(Menu.NONE, SORT, Menu.NONE, "Sort");
+		menu.add(Menu.NONE, HELP, Menu.NONE, "Help?");
 		return true;
 	}
 
@@ -121,16 +128,13 @@ public class MusicalLibrary extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case DELETE:
+			createAreYouSure();
 			break;
 		case SORT:
 			Toast.makeText(this, "Sorting...", Toast.LENGTH_SHORT).show();
-			String[] s = (String[]) songs.toArray();
-			java.util.Arrays.sort(s);
-			songs = new ArrayList<String>();
-			for (String s1 : s) {
-				songs.add(s1);
-			}
-			ListView list1 = (ListView) findViewById(R.id.listView1);
+			Collections.sort(songs);
+			Log.d("","songs: " + songs.size());
+			//updateView();
 			arrayAdapter = new ArrayAdapter<String>(this,
 					android.R.layout.simple_list_item_1, songs);
 			list1.setAdapter(arrayAdapter);
@@ -140,6 +144,28 @@ public class MusicalLibrary extends Activity {
 			break;
 		}
 		return false;
+	}
+	
+	public void createAreYouSure() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure??")
+				.setCancelable(true)
+				.setPositiveButton("Yes!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								library = new Library();
+								updateView();
+							}
+						})
+				.setNegativeButton("No!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	public void createHelpDialog() {
@@ -164,25 +190,26 @@ public class MusicalLibrary extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.d("","resuming musical library");
-		Intent i = getIntent();
-		if (i != null) {
-			Song s = (Song) i.getSerializableExtra("song object");
-			if (s != null) {
-				Log.d("","retrieved a non-null song on resume");
-				library.remove(s.getTitle());
-				library.addSong(s);
-				Log.d("", "should have updated song");
-				String titles = "";
-				for (Song s1 : library.getSongs()) {
-					titles = s1.getTitle() + "; ";
-				}
-				Log.d("", titles);
-				updateView();
-			}
-		}
+		Log.d("", "resuming musical library");
+		updateView();
+//		Intent i = getIntent();
+//		if (i != null) {
+//			Song s = (Song) i.getSerializableExtra("song object");
+//			if (s != null) {
+//				Log.d("", "retrieved a non-null song on resume");
+//				library.remove(s.getTitle());
+//				library.addSong(s);
+//				Log.d("", "should have updated song");
+//				String titles = "";
+//				for (Song s1 : library.getSongs()) {
+//					titles = s1.getTitle() + "; ";
+//				}
+//				Log.d("", titles);
+//				updateView();
+//			}
+//		}
 	}
-	
+
 	public void updateView() {
 		songs = new ArrayList<String>();
 		for (Song i : this.library.getSongs()) {
@@ -192,4 +219,40 @@ public class MusicalLibrary extends Activity {
 				android.R.layout.simple_list_item_1, songs);
 		list1.setAdapter(arrayAdapter);
 	}
+
+	public void persistStorage() {
+		String FILENAME = "library_file";
+		try {
+			FileOutputStream fos;
+			fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+			ObjectOutputStream out = new ObjectOutputStream(fos);
+			out.writeObject(this.library);
+			out.close();
+			fos.close();
+		} catch (Exception e) {
+			Log.wtf("", "persistent storage error");
+		}
+	}
+
+	public void regenerateStoredLibrary() {
+		try {
+			FileInputStream fileIn = openFileInput("library_file");
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			library = (Library) in.readObject();
+			in.close();
+			fileIn.close();
+		} catch (Exception i) {
+			i.printStackTrace();
+			Log.wtf("", "error reading file");
+		}
+		if (library == null) {
+			library = new Library();
+		}
+	}
+	
+	@Override
+    protected void onDestroy() {
+        super.onDestroy();
+        persistStorage();
+    }
 }

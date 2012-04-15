@@ -1,11 +1,13 @@
 package com.MusicalSketches.datarep;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import android.util.Log;
 
-public class Library {
+public class Library implements Serializable{
 
+	private static final long serialVersionUID = 5419219148601728866L;
 	private ArrayList<Song> songs;
 
 	public Library(ArrayList<Song> s) {
