@@ -7,7 +7,7 @@
         android:id="@+id/background"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/BetterSplash" />
+        android:background="@drawable/bettersplash" />
 
     <TextView
         android:id="@+id/textView1"
@@ -16,18 +16,14 @@
         android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="107dp"
+        android:layout_marginBottom="134dp"
+        android:textColor="#000"
         android:text="Continue to Music Library" />
 
 </RelativeLayout>
