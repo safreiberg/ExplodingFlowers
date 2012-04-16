@@ -37,6 +37,10 @@ public class MusicalLibrary extends Activity {
 	private ArrayAdapter<String> arrayAdapter;
 	private Library library;
 	private ListView list1;
+	
+	public MusicalLibrary() {
+		this.library = new Library();
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -192,25 +196,12 @@ public class MusicalLibrary extends Activity {
 		super.onResume();
 		Log.d("", "resuming musical library");
 		updateView();
-//		Intent i = getIntent();
-//		if (i != null) {
-//			Song s = (Song) i.getSerializableExtra("song object");
-//			if (s != null) {
-//				Log.d("", "retrieved a non-null song on resume");
-//				library.remove(s.getTitle());
-//				library.addSong(s);
-//				Log.d("", "should have updated song");
-//				String titles = "";
-//				for (Song s1 : library.getSongs()) {
-//					titles = s1.getTitle() + "; ";
-//				}
-//				Log.d("", titles);
-//				updateView();
-//			}
-//		}
 	}
 
 	public void updateView() {
+		if (this.library == null) {
+			this.library = new Library();
+		}
 		songs = new ArrayList<String>();
 		for (Song i : this.library.getSongs()) {
 			songs.add(i.getTitle());
@@ -242,7 +233,7 @@ public class MusicalLibrary extends Activity {
 			in.close();
 			fileIn.close();
 		} catch (Exception i) {
-			i.printStackTrace();
+			//i.printStackTrace();
 			Log.wtf("", "error reading file");
 		}
 		if (library == null) {

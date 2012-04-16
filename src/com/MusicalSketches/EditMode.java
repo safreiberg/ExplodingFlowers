@@ -1,11 +1,11 @@
 package com.MusicalSketches;
 
 import android.app.Activity;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaRecorder;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -78,7 +78,7 @@ public class EditMode extends Activity {
 
 			@Override
 			public boolean onTouch(View vi, MotionEvent event) {
-				final int action = event.getAction();
+				int action = event.getAction();
 				switch (action) {
 				case MotionEvent.ACTION_DOWN:
 					renewImage();
@@ -364,13 +364,15 @@ public class EditMode extends Activity {
 				duration = 0.5;
 			}
 			notesOnScreen++;
-			snapLeftRight(view, notesOnScreen-1);
+			snapLeftRight(view, notesOnScreen - 1);
 			addToSong(view, duration);
 		}
 	}
 
 	public void addToSong(View v, double length) {
-		song.addNote(new Note(getPitchFromYIndex(v.getY()), length, ""));
+		Note n = new Note(getPitchFromYIndex(v.getY()), length,
+				getNameFromYIndex(v.getY()));
+		song.addNote(n);
 	}
 
 	public void updateAnnotation(View view, types t) {
@@ -629,7 +631,8 @@ public class EditMode extends Activity {
 		builder.setTitle("Choose New Dynamic");
 		builder.setItems(dynamics, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				((Button)findViewById(R.id.dynamics_button)).setText(dynamics[item]);
+				((Button) findViewById(R.id.dynamics_button))
+						.setText(dynamics[item]);
 			}
 		});
 

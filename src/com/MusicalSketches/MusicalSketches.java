@@ -41,13 +41,6 @@ public class MusicalSketches extends Activity {
 
 	}
 	
-//	@Override
-//	public void onPause(){
-//		ImageView iw = (ImageView) findViewById(R.id.background);
-//		iw.setBackgroundResource(0);
-//	}
-	
-	
 	@Override
 	public void onResume() {
 		super.onResume();
