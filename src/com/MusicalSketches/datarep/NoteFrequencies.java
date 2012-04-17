@@ -1,13 +1,20 @@
 package com.MusicalSketches.datarep;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public class NoteFrequencies {
 
 	public static Map<String, Double> frequencyMap = new HashMap<String, Double>();
+	public static Map<Double, String> freqToString = new HashMap<Double, String>();
 	public static int[] staff_lines = new int[] { 227, 218, 208, 199, 189, 180,
-			160, 150 }; // from first line to fifth line
+			170, 160, 150 }; // from first line to fifth line
+	public static String[] staff_notes = new String[] { "e4", "f4", "g4", "a4",
+			"b4", "c5", "d5", "e5", "f5" };
+
 	static {
 		frequencyMap.put("e4", 329.4);
 		frequencyMap.put("f4", 349.2);
@@ -29,6 +36,19 @@ public class NoteFrequencies {
 		frequencyMap.put("e5", 659.3);
 		frequencyMap.put("f5", 698.5);
 		frequencyMap.put("f5sharp", 740.0);
+		Set<String> str = frequencyMap.keySet();
+		Collection<Double> dubs = frequencyMap.values();
+		Iterator<Double> dubit = dubs.iterator();
+		while (dubit.hasNext()) {
+			double d = dubit.next();
+			Iterator<String> j = str.iterator();
+			while (j.hasNext()) {
+				String js = j.next();
+				if (frequencyMap.get(js) == d) {
+					freqToString.put(d, js);
+				}
+			}
+		}
 	}
 
 	public static double getFrequency(String note) {

@@ -134,5 +134,9 @@ public class Song implements Serializable{
 	public Note getNoteNum(int index) {
 		return this.notes.getNotes().get(index);
 	}
+	
+	public String getKey() {
+		return this.key;
+	}
 
 }

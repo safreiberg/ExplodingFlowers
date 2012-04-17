@@ -62,7 +62,7 @@ public class MusicalLibrary extends Activity {
 				// When clicked, show a toast with the TextView text
 				Toast.makeText(getApplicationContext(),
 						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-				Intent next = new Intent(MusicalLibrary.this, EditMode.class);
+				Intent next = new Intent(MusicalLibrary.this, EditModeLegacy.class);
 				next.putExtra("song object",
 						library.getSong("" + ((TextView) view).getText()));
 				startActivityForResult(next, 0);

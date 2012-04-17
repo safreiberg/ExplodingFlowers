@@ -273,6 +273,7 @@ public class PlaybackMode extends Activity {
 			Intent next = new Intent(PlaybackMode.this, EditMode.class);
 			next.putExtra("song object", song);
 			startActivity(next);
+			//finish();
 			break;
 		}
 		return false;
