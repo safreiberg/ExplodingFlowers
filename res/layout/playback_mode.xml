@@ -20,7 +20,8 @@
         android:id="@+id/arrow_indicator"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="80dp"
+        android:layout_marginLeft="60dp"
+        android:visibility="invisible"
         android:layout_marginTop="50dp"
         android:contentDescription="@string/music_score"
         android:src="@drawable/arrow" />
