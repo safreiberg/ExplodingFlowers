@@ -46,10 +46,13 @@ public class EditModeLegacy extends Activity {
 	ImageButton sharp_button;
 	ImageButton natural_button;
 	ImageButton flat_button;
+	TextView meter_disp;
 	ImageButton trash_button;
 	ImageView clef_image;
 	ImageView music_score;
-
+	ImageButton right_button;
+	ImageButton left_button;
+	static final int MAX_NOTES_ONSCREEN = 10;
 	Song song = null;
 
 	states state = states.wait;
@@ -58,13 +61,16 @@ public class EditModeLegacy extends Activity {
 	boolean button_clicked = false; // tells whether the selected item is a
 									// button or placed piece
 	placement_objects type_selected;
-	View[] notes = new View[11];
-	View[] annotations = new View[11];
+	View[] notes = new View[MAX_NOTES_ONSCREEN];
+	View[] annotations = new View[MAX_NOTES_ONSCREEN];
+	int screen_number = 0; // this increments as you screen to the right. min =
+							// 0.
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_mode);
+		meter_disp = (TextView) findViewById(R.id.meter_text);
 		group = (ViewGroup) findViewById(R.id.edit_layout);
 		left_note = (ImageButton) findViewById(R.id.left_note);
 		middle_note = (ImageButton) findViewById(R.id.middle_note);
@@ -80,10 +86,26 @@ public class EditModeLegacy extends Activity {
 		music_score = (ImageView) findViewById(R.id.music_score);
 		trash_button = (ImageButton) findViewById(R.id.trash_can);
 		clef_image = (ImageView) findViewById(R.id.clef_image);
+		right_button = (ImageButton) findViewById(R.id.right_arrow);
+		left_button = (ImageButton) findViewById(R.id.left_arrow);
 
 		song = (Song) getIntent().getSerializableExtra("song object");
 
 		addClefMeterKey(song);
+		
+		class left_arrow_button_click implements OnClickListener {
+			@Override
+			public void onClick(View v) {
+				generateScreen(screen_number - 1);
+			}
+		}
+		
+		class right_arrow_button_click implements OnClickListener {
+			@Override
+			public void onClick(View v) {
+				generateScreen(screen_number + 1);
+			}
+		}
 
 		class eigth_click implements OnClickListener {
 
@@ -238,6 +260,8 @@ public class EditModeLegacy extends Activity {
 		flat_button.setOnClickListener(new flat_click());
 		sharp_button.setOnClickListener(new sharp_click());
 		trash_button.setOnClickListener(new trash_click());
+		left_button.setOnClickListener(new left_arrow_button_click());
+		right_button.setOnClickListener(new right_arrow_button_click());
 
 		dynamics_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -337,6 +361,10 @@ public class EditModeLegacy extends Activity {
 						}
 						int i = nextNote();
 						if (i < 0) {
+							// here's where we need a new screen. we should
+							// generate the new screen
+							// then process the click as normal?
+							//generateScreen(screen_number + 1);
 							return false;
 						}
 						int staff_line = 0;
@@ -377,7 +405,8 @@ public class EditModeLegacy extends Activity {
 							selected_view = notes[i];
 							Log.d("", "Selected view null (selectin)? "
 									+ Boolean.toString(selected_view == null));
-							type_selected = (placement_objects)notes[i].getTag();
+							type_selected = (placement_objects) notes[i]
+									.getTag();
 							state = states.selected_to_place;
 							return true;
 						}
@@ -413,12 +442,51 @@ public class EditModeLegacy extends Activity {
 		;
 
 		music_score.setOnTouchListener(new score_touch());
-		uploadFromSong(song);
+		generateScreen(0);
 	}
 
-	public void uploadFromSong(Song s) {
+	private void generateScreen(int number) {
+		// plan here is to save all the shit onscreen
+		// then redisplay an overlapping note and arrows as necessary.
+		// NB: savePage() must occur before reassigning screen_number
+		this.savePage();
+		Toast.makeText(getApplicationContext(), "Song length: " + song.size(), Toast.LENGTH_SHORT).show();
+		this.screen_number = number;
+		if (this.screen_number > 0) {
+			this.left_button.setVisibility(View.VISIBLE);
+			this.clef_image.setVisibility(View.INVISIBLE);
+			this.meter_disp.setVisibility(View.INVISIBLE);
+		} else {
+			this.left_button.setVisibility(View.INVISIBLE);
+			this.clef_image.setVisibility(View.VISIBLE);
+			this.meter_disp.setVisibility(View.VISIBLE);
+		}
+		// show the right button if there are more notes off the page.
+		if (this.song.size() >= (this.screen_number+1) * MAX_NOTES_ONSCREEN) {
+			this.right_button.setVisibility(View.VISIBLE);
+		} else {
+			this.right_button.setVisibility(View.INVISIBLE);
+		}
+		// before displaying anything, we hardcore clear the screen.
+		unclickAll();
+		for (View v : notes) {
+			group.removeView(v);
+		}
+		for (View v : annotations) {
+			group.removeView(v);
+		}
+		this.notes = new View[MAX_NOTES_ONSCREEN];
+		this.annotations = new View[MAX_NOTES_ONSCREEN];
+		
+		// we do this by duplicating and hopefully replacing all of the
+		// uploadFromSong code.
 		int g = 0;
-		for (Note n : s.getNotes().getNotes()) {
+		while (g < MAX_NOTES_ONSCREEN) {
+			Note n = this.song.getNoteNum(g + this.screen_number
+					* MAX_NOTES_ONSCREEN);
+			if (n == null) {
+				break;
+			}
 			Log.d("", "adding note");
 			double freq = n.getPitch();
 			double l = n.getLength();
@@ -434,7 +502,7 @@ public class EditModeLegacy extends Activity {
 					y = NoteFrequencies.staff_lines[i] - 30;
 				}
 			}
-			
+
 			if (l == 0.125) {
 				left_note.performClick();
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
@@ -481,10 +549,125 @@ public class EditModeLegacy extends Activity {
 				state = states.wait;
 				unclickAll();
 			}
+			str = NoteFrequencies.freqToString.get(freq);
+			Log.d("", "str value: " + str);
+			if (str.endsWith("sharp")) {
+				Log.wtf("", "Clicking sharp");
+				sharp_button.performClick();
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = (int) y - 30;
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				annotations[g] = selected_view;
+				selected_view.setLayoutParams(params);
+				group.removeView(selected_view);
+				group.addView(selected_view);
+				selected_view.setTag(type_selected);
+				state = states.wait;
+				unclickAll();
+			} else if (str.endsWith("flat")) {
+				flat_button.performClick();
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = (int) y - 30;
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				annotations[g] = selected_view;
+				selected_view.setLayoutParams(params);
+				group.removeView(selected_view);
+				group.addView(selected_view);
+				selected_view.setTag(type_selected);
+				state = states.wait;
+				unclickAll();
+			} else if (str.endsWith("natural")) {
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = (int) y - 30;
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				annotations[g] = selected_view;
+				selected_view.setLayoutParams(params);
+				group.removeView(selected_view);
+				group.addView(selected_view);
+				selected_view.setTag(type_selected);
+				state = states.wait;
+				unclickAll();
+			}
+			g++;
+		}
+	}
 
-//			music_score
-//					.dispatchTouchEvent(MotionEvent.obtain((long) 0, (long) 0,
-//							MotionEvent.ACTION_DOWN, (float) x, (float) y, 0));
+	@Deprecated
+	// Replace with generateScreen
+	public void uploadFromSong(Song s) {
+		int g = 0;
+		for (Note n : s.getNotes().getNotes()) {
+			Log.d("", "adding note");
+			double freq = n.getPitch();
+			double l = n.getLength();
+			double x = 20 + (g + 1) * 60;
+			Log.d("", "" + x);
+			String str = NoteFrequencies.freqToString.get(freq);
+			Log.d("", str);
+			str = str.substring(0, 2);
+			Log.d("", str);
+			double y = 0;
+			for (int i = 0; i < NoteFrequencies.staff_notes.length; i++) {
+				if (NoteFrequencies.staff_notes[i].equals(str)) {
+					y = NoteFrequencies.staff_lines[i] - 30;
+				}
+			}
+
+			if (l == 0.125) {
+				left_note.performClick();
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = (int) y;
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				notes[g] = selected_view;
+				selected_view.setLayoutParams(params);
+				group.removeView(selected_view);
+				group.addView(selected_view);
+				selected_view.setTag(type_selected);
+				state = states.wait;
+				unclickAll();
+			} else if (l == 0.25) {
+				middle_note.performClick();
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = (int) y;
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				notes[g] = selected_view;
+				selected_view.setLayoutParams(params);
+				group.removeView(selected_view);
+				group.addView(selected_view);
+				selected_view.setTag(type_selected);
+				state = states.wait;
+				unclickAll();
+			} else if (l == 0.5) {
+				right_note.performClick();
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = (int) y;
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				notes[g] = selected_view;
+				selected_view.setLayoutParams(params);
+				group.removeView(selected_view);
+				group.addView(selected_view);
+				selected_view.setTag(type_selected);
+				state = states.wait;
+				unclickAll();
+			}
 			str = NoteFrequencies.freqToString.get(freq);
 			Log.d("", "str value: " + str);
 			if (str.endsWith("sharp")) {
@@ -583,6 +766,9 @@ public class EditModeLegacy extends Activity {
 	public int nextNote() {
 		for (int i = 0; i < this.notes.length; i++) {
 			if (notes[i] == null) {
+				if (i == this.notes.length-1) {
+					this.right_button.setVisibility(View.VISIBLE);
+				}
 				return i;
 			}
 		}
@@ -609,6 +795,8 @@ public class EditModeLegacy extends Activity {
 		save();
 	}
 
+	@Deprecated
+	// Replace with savePage
 	public void save() {
 		// put information into song
 		if (song != null) {
@@ -618,12 +806,35 @@ public class EditModeLegacy extends Activity {
 		} else {
 			song = new Song();
 		}
+		for (int i = 0; i < this.notes.length; i++) {
+			Note n = getNoteFromIndex(i);
+			Log.d("",
+					"note at index: " + i + " is null? "
+							+ Boolean.toString(n == null));
+			if (n != null) {
+				Log.d("", "note at index: " + i + " is " + n.getName());
+				song.addNote(n);
+			}
+		}
+		// put song into return intent
+		Intent i = new Intent();
+		i.putExtra("song object", song);
+		setResult(0, i);
+	}
+
+	public void savePage() {
+		if (song != null) {
+		} else {
+			song = new Song();
+		}
 		for (int i = 0; i < notes.length; i++) {
 			Note n = getNoteFromIndex(i);
-			Log.d("","note at index: " + i + " is null? " + Boolean.toString(n==null));
+			Log.d("",
+					"note at index: " + i + " is null? "
+							+ Boolean.toString(n == null));
 			if (n != null) {
-				Log.d("","note at index: " + i + " is " + n.getName());
-				song.addNote(n);
+				Log.d("", "note at index: " + i + " is " + n.getName());
+				song.setNote(MAX_NOTES_ONSCREEN * this.screen_number + i, n);
 			}
 		}
 		// put song into return intent
@@ -641,8 +852,7 @@ public class EditModeLegacy extends Activity {
 			((ImageView) findViewById(R.id.clef_image))
 					.setImageResource(R.drawable.treble_clef);
 		}
-		((TextView) findViewById(R.id.meter_text)).setText("" + s.getMeterTop()
-				+ "\n" + s.getMeterBottom());
+		meter_disp.setText("" + s.getMeterTop() + "\n" + s.getMeterBottom());
 	}
 
 	public enum edit_menu_options {
@@ -772,7 +982,7 @@ public class EditModeLegacy extends Activity {
 			} else {
 				pitch = NoteFrequencies.frequencyMap.get(name).doubleValue();
 			}
-			Log.d("","Type of note: " + ((ImageView) notes[i]).getTag());
+			Log.d("", "Type of note: " + ((ImageView) notes[i]).getTag());
 			if (((ImageView) notes[i]).getTag() == placement_objects.left_note) {
 				length = 0.125;
 			} else if (((ImageView) notes[i]).getTag() == placement_objects.middle_note) {

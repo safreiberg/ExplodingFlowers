@@ -3,7 +3,7 @@ package com.MusicalSketches.datarep;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Song implements Serializable{
+public class Song implements Serializable {
 
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class Song implements Serializable{
 	private int tempo;
 	private int meterTop;
 	private int meterBottom;
-	private NoteSequence notes= new NoteSequence();
+	private NoteSequence notes = new NoteSequence();
 	private String title;
 	private Date date;
 	private String key;
@@ -32,7 +32,7 @@ public class Song implements Serializable{
 																		// deprecated
 		this.key = "C";
 	}
-	
+
 	public Song(Date date) {
 		this.clef = 1;
 		this.tempo = 100;
@@ -106,11 +106,23 @@ public class Song implements Serializable{
 	public int getMeterBottom() {
 		return this.meterBottom;
 	}
-	
-	public void addNote(Note n){
+
+	public void addNote(Note n) {
 		this.notes.addNote(n);
 	}
-	
+
+	public void setNote(int index, Note n) {
+		if (this.notes.size() <= index) {
+			this.notes.addNote(n);
+		} else {
+			notes.setNote(index, n);
+		}
+	}
+
+	public int size() {
+		return this.notes.size();
+	}
+
 	public void setTitle(String t) {
 		this.title = t;
 	}
@@ -122,19 +134,23 @@ public class Song implements Serializable{
 	public void setKey(String string) {
 		this.key = string;
 	}
-	
+
 	public void updateNotePitch(int index, double pitch) {
 		this.notes.updateNotePitch(index, pitch);
 	}
-	
+
 	public void updateNoteName(int index, String name) {
 		this.notes.updateNoteName(index, name);
 	}
-	
+
 	public Note getNoteNum(int index) {
-		return this.notes.getNotes().get(index);
+		try {
+			return this.notes.getNotes().get(index);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
 	}
-	
+
 	public String getKey() {
 		return this.key;
 	}

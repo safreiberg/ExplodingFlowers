@@ -34,8 +34,6 @@ public class PlaybackMode extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.playback_mode);
 
-		mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.music);
-
 		song = (Song) getIntent().getSerializableExtra("song object");
 		arrow = (ImageView)findViewById(R.id.arrow_indicator);
 		addClefMeterKey(song);

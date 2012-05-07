@@ -37,6 +37,8 @@ public class PlaybackModeLegacy extends Activity {
 	int xloc;
 	ImageView arrow;
 	ViewGroup group;
+	ImageButton right_button;
+	ImageButton left_button;
 	Timer arrowTimer;
 	int[] arrowLocations = new int[] { 110, 210, 310, 410, 510, 610 };
 
@@ -47,6 +49,8 @@ public class PlaybackModeLegacy extends Activity {
 
 		song = (Song) getIntent().getSerializableExtra("song object");
 		arrow = (ImageView) findViewById(R.id.arrow_indicator);
+		right_button = (ImageButton) findViewById(R.id.right_arrow);
+		left_button = (ImageButton) findViewById(R.id.left_arrow);
 
 		addClefMeterKey(song);
 		genTone();

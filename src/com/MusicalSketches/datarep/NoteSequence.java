@@ -15,8 +15,16 @@ public class NoteSequence implements Serializable{
 		this.notes = new ArrayList<Note>();
 	}
 	
+	public int size() {
+		return this.notes.size();
+	}
+	
 	public void addNote(int index, Note n){
 		notes.add(index, n);
+	}
+	
+	public void setNote(int index, Note n){
+		notes.set(index, n);
 	}
 	
 	public void removeNote(int index){
