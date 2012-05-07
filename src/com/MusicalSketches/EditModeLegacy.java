@@ -52,7 +52,7 @@ public class EditModeLegacy extends Activity {
 	ImageView music_score;
 	ImageButton right_button;
 	ImageButton left_button;
-	static final int MAX_NOTES_ONSCREEN = 10;
+	public static final int MAX_NOTES_ONSCREEN = 10;
 	Song song = null;
 
 	states state = states.wait;
@@ -785,14 +785,14 @@ public class EditModeLegacy extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		save();
+		savePage();
 		finish();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		save();
+		savePage();
 	}
 
 	@Deprecated
@@ -872,11 +872,11 @@ public class EditModeLegacy extends Activity {
 		switch (item.getItemId()) {
 		case R.id.edit_close:
 			Toast.makeText(this, "Closing!", Toast.LENGTH_SHORT).show();
-			save();
+			savePage();
 			finish();
 			break;
 		case R.id.edit_play:
-			save();
+			savePage();
 			Toast.makeText(this, "Play...", Toast.LENGTH_SHORT).show();
 			Intent next = new Intent(EditModeLegacy.this,
 					PlaybackModeLegacy.class);
@@ -885,7 +885,7 @@ public class EditModeLegacy extends Activity {
 			break;
 		case R.id.edit_save:
 			Toast.makeText(this, "Save...", Toast.LENGTH_SHORT).show();
-			save();
+			savePage();
 			break;
 		case R.id.edit_delete:
 			Toast.makeText(this, "Deleting...", Toast.LENGTH_SHORT).show();

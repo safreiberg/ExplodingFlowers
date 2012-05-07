@@ -32,6 +32,7 @@ public class PlaybackModeLegacy extends Activity {
 	int sampleRate = 8000;
 	byte[] generatedSnd;
 	int numSamples;
+	int screen = 0;
 	AudioTrack audioTrack;
 	ImageButton b;
 	int xloc;
@@ -96,7 +97,8 @@ public class PlaybackModeLegacy extends Activity {
 	public void uploadFromSong(Song s) {
 		int g = 0;
 		ViewGroup group = (ViewGroup) findViewById(R.id.edit_layout);
-		for (Note n : s.getNotes().getNotes()) {
+		for (int loc = 0; loc < EditModeLegacy.MAX_NOTES_ONSCREEN; loc++) {
+			Note n = s.getNoteNum(EditModeLegacy.MAX_NOTES_ONSCREEN*screen + loc);
 			Log.d("", "adding note");
 			double freq = n.getPitch();
 			double l = n.getLength();
@@ -267,7 +269,7 @@ public class PlaybackModeLegacy extends Activity {
 		group.addView(arrow);
 		arrow.setVisibility(0);
 		for (Note n : song.getNotes().getNotes()) {
-			time += n.getLength()*1000;
+			time += n.getLength() * 1000;
 			g++;
 			final int x = 20 + (g + 1) * 60;
 			arrowTimer.schedule(new TimerTask() {
@@ -275,6 +277,7 @@ public class PlaybackModeLegacy extends Activity {
 				public void run() {
 					class ArrowRun implements Runnable {
 						int x;
+
 						public ArrowRun(int x) {
 							this.x = x;
 						}
@@ -291,7 +294,7 @@ public class PlaybackModeLegacy extends Activity {
 							group.addView(arrow);
 							arrow.setVisibility(0);
 						}
-						
+
 					}
 					runOnUiThread(new ArrowRun(x));
 				}
