@@ -1,4 +1,4 @@
-package com.MusicalSketches;
+/*package com.MusicalSketches;
 
 import java.util.Date;
 
@@ -401,7 +401,7 @@ public class EditModeLegacy extends Activity {
 						if (hit(x, y, hitSpace)) {
 							// hit!
 							((ImageView) notes[i])
-									.setBackgroundColor(Color.argb(50, 255, 230, 100)); //should be a more neutral yellow
+									.setBackgroundColor(Color.RED);
 							selected_view = notes[i];
 							Log.d("", "Selected view null (selectin)? "
 									+ Boolean.toString(selected_view == null));
@@ -420,7 +420,7 @@ public class EditModeLegacy extends Activity {
 						if (hit(x, y, hitSpace)) {
 							// hit!
 							((ImageView) annotations[i])
-									.setBackgroundColor(Color.argb(50, 255, 230, 100)); //more neutral yellow
+									.setBackgroundColor(Color.RED);
 							selected_view = annotations[i];
 							type_selected = placement_objects.sharp;
 							state = states.selected_to_place;
@@ -871,7 +871,7 @@ public class EditModeLegacy extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.edit_close:
-			Toast.makeText(this, "Closing...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Closing!", Toast.LENGTH_SHORT).show();
 			savePage();
 			finish();
 			break;
@@ -884,7 +884,7 @@ public class EditModeLegacy extends Activity {
 			startActivity(next);
 			break;
 		case R.id.edit_save:
-			Toast.makeText(this, "Saving...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Save...", Toast.LENGTH_SHORT).show();
 			savePage();
 			break;
 		case R.id.edit_delete:
@@ -995,3 +995,4 @@ public class EditModeLegacy extends Activity {
 		return null;
 	}
 }
+*/

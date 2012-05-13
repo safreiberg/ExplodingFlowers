@@ -1,11 +1,11 @@
-/*package com.MusicalSketches;
-
+package com.MusicalSketches;
+/*
 import android.app.Activity;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaRecorder;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -23,12 +22,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.MusicalSketches.datarep.KeySignatures;
 import com.MusicalSketches.datarep.Note;
 import com.MusicalSketches.datarep.NoteFrequencies;
 import com.MusicalSketches.datarep.Song;
 
-public class EditMode2 extends Activity {
+public class EditMode extends Activity {
 	private Song song;
 	int notesOnScreen = 0;
 
@@ -67,11 +65,11 @@ public class EditMode2 extends Activity {
 			private View v;
 			private int offsetX;
 			private int offsetY;
-			private com.MusicalSketches.EditMode2.types code;
+			private types code;
 
 			// draws the given resourceID
 			public ButtonTouchListener(int resourceID, View v,
-					EditMode2.types code) {
+					EditMode.types code) {
 				this.resourceID = resourceID;
 				this.v = v;
 				Log.d("", "image constructed from button");
@@ -84,51 +82,30 @@ public class EditMode2 extends Activity {
 				switch (action) {
 				case MotionEvent.ACTION_DOWN:
 					renewImage();
-					// ((ViewGroup)
-					// findViewById(R.id.edit_layout)).addView(img);
-					((ViewGroup) findViewById(R.id.edit_layout)).addView(
-							img,
-							new AbsoluteLayout.LayoutParams(img.getWidth(), img
-									.getHeight(), (int) event.getX(),
-									(int) event.getY()));
-					// Toast.makeText(getApplicationContext(), "Down: " +
-					// event.getX() + " " + event.getY(),
-					// Toast.LENGTH_SHORT).show();
-					// Log.d("",
-					// "action down: " + event.getX() + " " + event.getY());
+					((ViewGroup) findViewById(R.id.edit_layout)).addView(img);
+					img.setX(event.getX() + offsetX);
+					img.setY(event.getY() + offsetY);
+					Log.d("",
+							"action down: " + event.getX() + " " + event.getY());
 					break;
 				case MotionEvent.ACTION_UP:
-					// Toast.makeText(getApplicationContext(), "Up: " +
-					// event.getX() + " " + event.getY(),
-					// Toast.LENGTH_SHORT).show();
-					// Log.d("", "action up: " + event.getX() + " " +
-					// event.getY());
-					// if (this.code == EditMode2.types.note) {
-					// addNote(img, this.resourceID);
-					// } else if (this.code == types.sharp) {
-					// addAnnotation(img, types.sharp);
-					// } else if (this.code == types.flat) {
-					// addAnnotation(img, types.flat);
-					// } else if (this.code == types.natural) {
-					// addAnnotation(img, types.natural);
-					// }
-					// img = null;
+					Log.d("", "action up: " + event.getX() + " " + event.getY());
+					if (this.code == types.note) {
+						addNote(img, this.resourceID);
+					} else if (this.code == types.sharp) {
+						addAnnotation(img, types.sharp);
+					} else if (this.code == types.flat) {
+						addAnnotation(img, types.flat);
+					} else if (this.code == types.natural) {
+						addAnnotation(img, types.natural);
+					}
+					img = null;
 					break;
 				case MotionEvent.ACTION_MOVE:
-					// Toast.makeText(getApplicationContext(), "Move: " +
-					// event.getX() + " " + event.getY(),
-					// Toast.LENGTH_SHORT).show();
-					// Log.d("",
-					// "action move: " + event.getX() + " " + event.getY());
-					// ((ViewGroup) findViewById(R.id.edit_layout))
-					// .removeView(img);
-					((ViewGroup) findViewById(R.id.edit_layout))
-							.removeView(img);
-					((ViewGroup) findViewById(R.id.edit_layout)).addView(
-							img,
-							new AbsoluteLayout.LayoutParams(img.getWidth(), img
-									.getHeight(), (int) event.getX(),
-									(int) event.getY()));
+					Log.d("",
+							"action move: " + event.getX() + " " + event.getY());
+					img.setX(event.getX() + offsetX);
+					img.setY(event.getY() + offsetY);
 					break;
 				}
 				return true;
@@ -148,29 +125,29 @@ public class EditMode2 extends Activity {
 
 		left_note.setOnTouchListener(new ButtonTouchListener(
 				R.drawable.eigth_note_transparent, left_note, types.note));
-		// middle_note.setOnTouchListener(new ButtonTouchListener(
-		// R.drawable.quarter_note_transparent, middle_note, types.note));
-		// right_note.setOnTouchListener(new ButtonTouchListener(
-		// R.drawable.half_note_transparent, right_note, types.note));
-		// sharp_button.setOnTouchListener(new ButtonTouchListener(
-		// R.drawable.sharp_transparent, sharp_button, types.sharp));
-		// natural_button.setOnTouchListener(new ButtonTouchListener(
-		// R.drawable.natural_transparent, natural_button, types.natural));
-		// flat_button.setOnTouchListener(new ButtonTouchListener(
-		// R.drawable.flat_transparent, flat_button, types.flat));
-		// dynamics_button.setOnClickListener(new View.OnClickListener() {
-		// public void onClick(View v) {
-		// createDynamicsDialog();
-		// }
-		// });
-		//
-		// record_button.setOnClickListener(new View.OnClickListener() {
-		// public void onClick(View v) {
-		// createRecordDialog();
-		// }
-		// });
-		//
-		// updateFromLoadedSong(song);
+		middle_note.setOnTouchListener(new ButtonTouchListener(
+				R.drawable.quarter_note_transparent, middle_note, types.note));
+		right_note.setOnTouchListener(new ButtonTouchListener(
+				R.drawable.half_note_transparent, right_note, types.note));
+		sharp_button.setOnTouchListener(new ButtonTouchListener(
+				R.drawable.sharp_transparent, sharp_button, types.sharp));
+		natural_button.setOnTouchListener(new ButtonTouchListener(
+				R.drawable.natural_transparent, natural_button, types.natural));
+		flat_button.setOnTouchListener(new ButtonTouchListener(
+				R.drawable.flat_transparent, flat_button, types.flat));
+		dynamics_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				createDynamicsDialog();
+			}
+		});
+
+		record_button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				createRecordDialog();
+			}
+		});
+
+		updateFromLoadedSong(song);
 
 	}
 
@@ -191,48 +168,25 @@ public class EditMode2 extends Activity {
 			img.setMaxWidth(50);
 			img.setVisibility(0);
 			((ViewGroup) findViewById(R.id.edit_layout)).addView(img);
-			if (song.getClef() == 1) { // treble clef
-				if (n.getName().startsWith("e4")) {
-					img.setY(186);
-				} else if (n.getName().startsWith("f4")) {
-					img.setY(176);
-				} else if (n.getName().startsWith("g4")) {
-					img.setY(166);
-				} else if (n.getName().startsWith("a4")) {
-					img.setY(156);
-				} else if (n.getName().startsWith("b4")) {
-					img.setY(146);
-				} else if (n.getName().startsWith("c5")) {
-					img.setY(136);
-				} else if (n.getName().startsWith("d5")) {
-					img.setY(126);
-				} else if (n.getName().startsWith("e5")) {
-					img.setY(116);
-				} else if (n.getName().startsWith("f5")) {
-					img.setY(106);
-				}
-			} else { // bass clef
-				if (n.getName().startsWith("g2")) {
-					img.setY(186);
-				} else if (n.getName().startsWith("a2")) {
-					img.setY(176);
-				} else if (n.getName().startsWith("b2")) {
-					img.setY(166);
-				} else if (n.getName().startsWith("c3")) {
-					img.setY(156);
-				} else if (n.getName().startsWith("d3")) {
-					img.setY(146);
-				} else if (n.getName().startsWith("e3")) {
-					img.setY(136);
-				} else if (n.getName().startsWith("f3")) {
-					img.setY(126);
-				} else if (n.getName().startsWith("g3")) {
-					img.setY(116);
-				} else if (n.getName().startsWith("a3")) {
-					img.setY(106);
-				}
+			if (n.getName().startsWith("e4")) {
+				img.setY(186);
+			} else if (n.getName().startsWith("f4")) {
+				img.setY(176);
+			} else if (n.getName().startsWith("g4")) {
+				img.setY(166);
+			} else if (n.getName().startsWith("a4")) {
+				img.setY(156);
+			} else if (n.getName().startsWith("b4")) {
+				img.setY(146);
+			} else if (n.getName().startsWith("c5")) {
+				img.setY(136);
+			} else if (n.getName().startsWith("d5")) {
+				img.setY(126);
+			} else if (n.getName().startsWith("e5")) {
+				img.setY(116);
+			} else if (n.getName().startsWith("f5")) {
+				img.setY(106);
 			}
-
 			addNote(img, 0);
 			notesOnScreen += 1;
 			float y = img.getY();
@@ -416,7 +370,9 @@ public class EditMode2 extends Activity {
 	}
 
 	public void addToSong(View v, double length) {
-		song.addNote(new Note(getPitchFromYIndex(v.getY()), length, ""));
+		Note n = new Note(getPitchFromYIndex(v.getY()), length,
+				getNameFromYIndex(v.getY()));
+		song.addNote(n);
 	}
 
 	public void updateAnnotation(View view, types t) {
@@ -461,96 +417,48 @@ public class EditMode2 extends Activity {
 	}
 
 	public double getPitchFromYIndex(float y) {
-		// TODO: implement sharps and flats
-		if (song.getClef() == 1) { // treble clef
-
-			if (191 >= y && y > 181) {
-				return NoteFrequencies.getFrequency("e4");
-			} else if (181 >= y && y > 171) {
-				return NoteFrequencies.getFrequency("f4");
-			} else if (171 >= y && y > 161) {
-				return NoteFrequencies.getFrequency("g4");
-			} else if (161 >= y && y > 151) {
-				return NoteFrequencies.getFrequency("a4");
-			} else if (151 >= y && y > 141) {
-				return NoteFrequencies.getFrequency("b4");
-			} else if (141 >= y && y > 131) {
-				return NoteFrequencies.getFrequency("c5");
-			} else if (131 >= y && y > 121) {
-				return NoteFrequencies.getFrequency("d5");
-			} else if (121 >= y && y > 111) {
-				return NoteFrequencies.getFrequency("e5");
-			} else if (111 >= y && y > 101) {
-				return NoteFrequencies.getFrequency("f5");
-			}
-		} else if (song.getClef() == 0) { // bass clef
-			if (191 >= y && y > 181) {
-				return NoteFrequencies.getFrequency("g2");
-			} else if (181 >= y && y > 171) {
-				return NoteFrequencies.getFrequency("a2");
-			} else if (171 >= y && y > 161) {
-				return NoteFrequencies.getFrequency("b2");
-			} else if (161 >= y && y > 151) {
-				return NoteFrequencies.getFrequency("c3");
-			} else if (151 >= y && y > 141) {
-				return NoteFrequencies.getFrequency("d3");
-			} else if (141 >= y && y > 131) {
-				return NoteFrequencies.getFrequency("e3");
-			} else if (131 >= y && y > 121) {
-				return NoteFrequencies.getFrequency("f3");
-			} else if (121 >= y && y > 111) {
-				return NoteFrequencies.getFrequency("g3");
-			} else if (111 >= y && y > 101) {
-				return NoteFrequencies.getFrequency("a3");
-			}
+		if (191 >= y && y > 181) {
+			return NoteFrequencies.getFrequency("e4");
+		} else if (181 >= y && y > 171) {
+			return NoteFrequencies.getFrequency("f4");
+		} else if (171 >= y && y > 161) {
+			return NoteFrequencies.getFrequency("g4");
+		} else if (161 >= y && y > 151) {
+			return NoteFrequencies.getFrequency("a4");
+		} else if (151 >= y && y > 141) {
+			return NoteFrequencies.getFrequency("b4");
+		} else if (141 >= y && y > 131) {
+			return NoteFrequencies.getFrequency("c5");
+		} else if (131 >= y && y > 121) {
+			return NoteFrequencies.getFrequency("d5");
+		} else if (121 >= y && y > 111) {
+			return NoteFrequencies.getFrequency("e5");
+		} else if (111 >= y && y > 101) {
+			return NoteFrequencies.getFrequency("f5");
 		}
 		return -1;
 	}
 
 	public String getNameFromYIndex(float y) {
-		// TODO: Implement sharps and flats
-		if (song.getClef() == 1) { // treble clef
-			if (191 >= y && y > 181) {
-				return "e4";
-			} else if (181 >= y && y > 171) {
-				return "f4";
-			} else if (171 >= y && y > 161) {
-				return ("g4");
-			} else if (161 >= y && y > 151) {
-				return ("a4");
-			} else if (151 >= y && y > 141) {
-				return ("b4");
-			} else if (141 >= y && y > 131) {
-				return ("c5");
-			} else if (131 >= y && y > 121) {
-				return ("d5");
-			} else if (121 >= y && y > 111) {
-				return ("e5");
-			} else if (111 >= y && y > 101) {
-				return ("f5");
-			}
-		} else if (song.getClef() == 0) { // bass clef
-			if (191 >= y && y > 181) {
-				return "g2";
-			} else if (181 >= y && y > 171) {
-				return "a2";
-			} else if (171 >= y && y > 161) {
-				return ("b2");
-			} else if (161 >= y && y > 151) {
-				return ("c3");
-			} else if (151 >= y && y > 141) {
-				return ("d3");
-			} else if (141 >= y && y > 131) {
-				return ("e3");
-			} else if (131 >= y && y > 121) {
-				return ("f3");
-			} else if (121 >= y && y > 111) {
-				return ("g3");
-			} else if (111 >= y && y > 101) {
-				return ("a3");
-			}
+		if (191 >= y && y > 181) {
+			return "e4";
+		} else if (181 >= y && y > 171) {
+			return "f4";
+		} else if (171 >= y && y > 161) {
+			return ("g4");
+		} else if (161 >= y && y > 151) {
+			return ("a4");
+		} else if (151 >= y && y > 141) {
+			return ("b4");
+		} else if (141 >= y && y > 131) {
+			return ("c5");
+		} else if (131 >= y && y > 121) {
+			return ("d5");
+		} else if (121 >= y && y > 111) {
+			return ("e5");
+		} else if (111 >= y && y > 101) {
+			return ("f5");
 		}
-
 		return null;
 	}
 
@@ -590,178 +498,49 @@ public class EditMode2 extends Activity {
 	}
 
 	public int getYFromNote(double pitch) {
-		if (song.getClef() == 1) { // treble clef
-			if (pitch == NoteFrequencies.getFrequency("e4")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("e4flat")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("e4sharp")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("f4")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("f4flat")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("f4sharp")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("g4flat")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("g4")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("g4sharp")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("a4flat")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("a4")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("a4sharp")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("b4flat")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("b4")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("b4sharp")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("c5")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("c5flat")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("c5sharp")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("d5flat")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("d5")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("d5sharp")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("e5flat")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("e5")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("e5sharp")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("f5")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("f5flat")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("f5sharp")) {
-				return 106;
-			}
-		} else if (song.getClef() == 0) { // bass clef
-			if (pitch == NoteFrequencies.getFrequency("g2")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("g2flat")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("g2sharp")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("a2")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("a2sharp")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("a2flat")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("b2flat")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("b2")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("b2sharp")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("c3flat")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("c3")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("c3sharp")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("d3flat")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("d3")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("d3sharp")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("e3flat")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("e3")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("e3sharp")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("f3flat")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("f3")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("f3sharp")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("g3flat")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("g3")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("g3sharp")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("a3")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("a3sharp")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("a3flat")) {
-				return 106;
-			}
+		if (pitch == NoteFrequencies.getFrequency("e4")) {
+			return 186;
+		} else if (pitch == NoteFrequencies.getFrequency("f4")) {
+			return 176;
+		} else if (pitch == NoteFrequencies.getFrequency("f4sharp")) {
+			return 176;
+		} else if (pitch == NoteFrequencies.getFrequency("g4flat")) {
+			return 166;
+		} else if (pitch == NoteFrequencies.getFrequency("g4")) {
+			return 166;
+		} else if (pitch == NoteFrequencies.getFrequency("g4sharp")) {
+			return 166;
+		} else if (pitch == NoteFrequencies.getFrequency("a4flat")) {
+			return 156;
+		} else if (pitch == NoteFrequencies.getFrequency("a4")) {
+			return 156;
+		} else if (pitch == NoteFrequencies.getFrequency("a4sharp")) {
+			return 156;
+		} else if (pitch == NoteFrequencies.getFrequency("b4flat")) {
+			return 146;
+		} else if (pitch == NoteFrequencies.getFrequency("b4")) {
+			return 146;
+		} else if (pitch == NoteFrequencies.getFrequency("c5")) {
+			return 136;
+		} else if (pitch == NoteFrequencies.getFrequency("c5sharp")) {
+			return 136;
+		} else if (pitch == NoteFrequencies.getFrequency("d5flat")) {
+			return 126;
+		} else if (pitch == NoteFrequencies.getFrequency("d5")) {
+			return 126;
+		} else if (pitch == NoteFrequencies.getFrequency("d5sharp")) {
+			return 126;
+		} else if (pitch == NoteFrequencies.getFrequency("e5flat")) {
+			return 116;
+		} else if (pitch == NoteFrequencies.getFrequency("e5")) {
+			return 116;
+		} else if (pitch == NoteFrequencies.getFrequency("f5")) {
+			return 106;
+		} else if (pitch == NoteFrequencies.getFrequency("f5sharp")) {
+			return 106;
 		}
 
 		return -1;
-	}
-
-	public void genKeySigY() {
-		//need to store the values somewhere....
-		for (String s : KeySignatures.keyMap.get(song.getKey())) {
-			if (song.getClef() == 1) { // treble clef
-				if (s.equals("f")) {
-					if (KeySignatures.keyMap.get(song.getKey()) == "Sharp") {
-						img.setY(106);
-					} else {
-						img.setY(176);
-					}
-				} else if (s.equals("g")) {
-					if (KeySignatures.keyMap.get(song.getKey()) == "Sharp") {
-						img.setY(96);
-					} else {
-						img.setY(166);
-					}
-				} else if (s.equals("a")) {
-					img.setY(156);
-				} else if (s.equals("b")) {
-					img.setY(146);
-				} else if (s.equals("c")) {
-					img.setY(136);
-				} else if (s.equals("d")) {
-					img.setY(126);
-				} else if (s.equals("e")) {
-					img.setY(116);
-				}
-
-			} else { // bass clef
-				if (s.equals("g")) {
-					if (KeySignatures.keyMap.get(song.getKey()) == "Sharp") {
-						img.setY(116);
-					} else {
-						img.setY(186);
-					}
-				} else if (s.equals("a")) {
-					img.setY(176);
-				} else if (s.equals("b")) {
-					img.setY(166);
-				} else if (s.equals("c")) {
-					img.setY(156);
-				} else if (s.equals("d")) {
-					img.setY(146);
-				} else if (s.equals("e")) {
-					img.setY(136);
-				} else if (s.equals("f")) {
-					if (KeySignatures.keyMap.get(song.getKey()) == "Sharp") {
-						img.setY(126);
-					} else {
-						img.setY(196);
-					}
-				}
-			}
-		}
-
 	}
 
 	public enum edit_menu_options {
@@ -780,18 +559,18 @@ public class EditMode2 extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.edit_close:
-			Toast.makeText(this, "Closing...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Closing!", Toast.LENGTH_SHORT).show();
 			save();
 			finish();
 			break;
 		case R.id.edit_play:
 			Toast.makeText(this, "Play...", Toast.LENGTH_SHORT).show();
-			Intent next = new Intent(EditMode2.this, PlaybackMode.class);
+			Intent next = new Intent(EditMode.this, PlaybackMode.class);
 			next.putExtra("song object", song);
 			startActivity(next);
 			break;
 		case R.id.edit_save:
-			Toast.makeText(this, "Saving...", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Save...", Toast.LENGTH_SHORT).show();
 			save();
 			break;
 		case R.id.edit_delete:
@@ -863,9 +642,9 @@ public class EditMode2 extends Activity {
 	}
 
 	public void createKeyDialog() {
-		final CharSequence[] keys = { "C", "G", "D", "A", "E", "B", "F#", "Gb",
-				"Db", "Ab", "Eb", "Bb", "F", "A minor", "E minor", "B minor",
-				"F# minor", "C# minor", "G# minor", "Eb minor", "Bb minor",
+		final CharSequence[] keys = { "C", "G", "D", "A", "E", "B", "F#", "Db",
+				"Ab", "Eb", "Bb", "F", "A minor", "E minor", "B minor",
+				"F# minor", "Db minor", "Ab minor", "Eb minor", "Bb minor",
 				"F minor", "C minor", "G minor", "D minor" };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Choose New Key");
@@ -979,7 +758,7 @@ public class EditMode2 extends Activity {
 		save();
 	}
 
-	public void addClefMeterKey(Song s) { // need to add tempo and key signature
+	public void addClefMeterKey(Song s) {
 		int clef = s.getClef();
 		if (clef == 1) {
 			((ImageView) findViewById(R.id.clef_image))

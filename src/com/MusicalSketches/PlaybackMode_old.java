@@ -1,4 +1,4 @@
-package com.MusicalSketches;
+/*package com.MusicalSketches;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -90,46 +90,24 @@ public class PlaybackMode extends Activity {
 			img.setMaxWidth(50);
 			img.setVisibility(0);
 			((ViewGroup) findViewById(R.id.edit_layout)).addView(img);
-			if (song.getClef() == 1) { // treble clef
-				if (n.getName().startsWith("e4")) {
-					img.setY(186);
-				} else if (n.getName().startsWith("f4")) {
-					img.setY(176);
-				} else if (n.getName().startsWith("g4")) {
-					img.setY(166);
-				} else if (n.getName().startsWith("a4")) {
-					img.setY(156);
-				} else if (n.getName().startsWith("b4")) {
-					img.setY(146);
-				} else if (n.getName().startsWith("c5")) {
-					img.setY(136);
-				} else if (n.getName().startsWith("d5")) {
-					img.setY(126);
-				} else if (n.getName().startsWith("e5")) {
-					img.setY(116);
-				} else if (n.getName().startsWith("f5")) {
-					img.setY(106);
-				}
-			} else { // bass clef
-				if (n.getName().startsWith("g2")) {
-					img.setY(186);
-				} else if (n.getName().startsWith("a2")) {
-					img.setY(176);
-				} else if (n.getName().startsWith("b2")) {
-					img.setY(166);
-				} else if (n.getName().startsWith("c3")) {
-					img.setY(156);
-				} else if (n.getName().startsWith("d3")) {
-					img.setY(146);
-				} else if (n.getName().startsWith("e3")) {
-					img.setY(136);
-				} else if (n.getName().startsWith("f3")) {
-					img.setY(126);
-				} else if (n.getName().startsWith("g3")) {
-					img.setY(116);
-				} else if (n.getName().startsWith("a3")) {
-					img.setY(106);
-				}
+			if (n.getName().startsWith("e4")) {
+				img.setY(186);
+			} else if (n.getName().startsWith("f4")) {
+				img.setY(176);
+			} else if (n.getName().startsWith("g4")) {
+				img.setY(166);
+			} else if (n.getName().startsWith("a4")) {
+				img.setY(156);
+			} else if (n.getName().startsWith("b4")) {
+				img.setY(146);
+			} else if (n.getName().startsWith("c5")) {
+				img.setY(136);
+			} else if (n.getName().startsWith("d5")) {
+				img.setY(126);
+			} else if (n.getName().startsWith("e5")) {
+				img.setY(116);
+			} else if (n.getName().startsWith("f5")) {
+				img.setY(106);
 			}
 			snapToBar(img);
 			snapLeftRight(img, notesOnScreen);
@@ -222,120 +200,47 @@ public class PlaybackMode extends Activity {
 	}
 
 	public int getYFromNote(double pitch) {
-		if (song.getClef() == 1) { // treble clef
-			if (pitch == NoteFrequencies.getFrequency("e4")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("e4flat")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("e4sharp")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("f4")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("f4flat")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("f4sharp")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("g4flat")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("g4")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("g4sharp")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("a4flat")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("a4")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("a4sharp")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("b4flat")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("b4")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("b4sharp")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("c5")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("c5flat")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("c5sharp")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("d5flat")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("d5")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("d5sharp")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("e5flat")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("e5")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("e5sharp")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("f5")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("f5flat")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("f5sharp")) {
-				return 106;
-			}
-		} else if (song.getClef() == 0) { // bass clef
-			if (pitch == NoteFrequencies.getFrequency("g2")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("g2flat")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("g2sharp")) {
-				return 186;
-			} else if (pitch == NoteFrequencies.getFrequency("a2")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("a2sharp")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("a2flat")) {
-				return 176;
-			} else if (pitch == NoteFrequencies.getFrequency("b2flat")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("b2")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("b2sharp")) {
-				return 166;
-			} else if (pitch == NoteFrequencies.getFrequency("c3flat")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("c3")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("c3sharp")) {
-				return 156;
-			} else if (pitch == NoteFrequencies.getFrequency("d3flat")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("d3")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("d3sharp")) {
-				return 146;
-			} else if (pitch == NoteFrequencies.getFrequency("e3flat")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("e3")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("e3sharp")) {
-				return 136;
-			} else if (pitch == NoteFrequencies.getFrequency("f3flat")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("f3")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("f3sharp")) {
-				return 126;
-			} else if (pitch == NoteFrequencies.getFrequency("g3flat")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("g3")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("g3sharp")) {
-				return 116;
-			} else if (pitch == NoteFrequencies.getFrequency("a3")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("a3sharp")) {
-				return 106;
-			} else if (pitch == NoteFrequencies.getFrequency("a3flat")) {
-				return 106;
-			}
+		if (pitch == NoteFrequencies.getFrequency("e4")) {
+			return 186;
+		} else if (pitch == NoteFrequencies.getFrequency("f4")) {
+			return 176;
+		} else if (pitch == NoteFrequencies.getFrequency("f4sharp")) {
+			return 176;
+		} else if (pitch == NoteFrequencies.getFrequency("g4flat")) {
+			return 166;
+		} else if (pitch == NoteFrequencies.getFrequency("g4")) {
+			return 166;
+		} else if (pitch == NoteFrequencies.getFrequency("g4sharp")) {
+			return 166;
+		} else if (pitch == NoteFrequencies.getFrequency("a4flat")) {
+			return 156;
+		} else if (pitch == NoteFrequencies.getFrequency("a4")) {
+			return 156;
+		} else if (pitch == NoteFrequencies.getFrequency("a4sharp")) {
+			return 156;
+		} else if (pitch == NoteFrequencies.getFrequency("b4flat")) {
+			return 146;
+		} else if (pitch == NoteFrequencies.getFrequency("b4")) {
+			return 146;
+		} else if (pitch == NoteFrequencies.getFrequency("c5")) {
+			return 136;
+		} else if (pitch == NoteFrequencies.getFrequency("c5sharp")) {
+			return 136;
+		} else if (pitch == NoteFrequencies.getFrequency("d5flat")) {
+			return 126;
+		} else if (pitch == NoteFrequencies.getFrequency("d5")) {
+			return 126;
+		} else if (pitch == NoteFrequencies.getFrequency("d5sharp")) {
+			return 126;
+		} else if (pitch == NoteFrequencies.getFrequency("e5flat")) {
+			return 116;
+		} else if (pitch == NoteFrequencies.getFrequency("e5")) {
+			return 116;
+		} else if (pitch == NoteFrequencies.getFrequency("f5")) {
+			return 106;
+		} else if (pitch == NoteFrequencies.getFrequency("f5sharp")) {
+			return 106;
 		}
-
 
 		return -1;
 	}
@@ -385,3 +290,4 @@ public class PlaybackMode extends Activity {
 	public void playArrows() {
 	}
 }
+*/
