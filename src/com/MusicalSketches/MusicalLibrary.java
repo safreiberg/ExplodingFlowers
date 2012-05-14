@@ -37,6 +37,7 @@ public class MusicalLibrary extends Activity {
 	private ArrayAdapter<String> arrayAdapter;
 	private Library library;
 	private ListView list1;
+	private TextView text;
 	
 	public MusicalLibrary() {
 		this.library = new Library();
@@ -47,11 +48,14 @@ public class MusicalLibrary extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.userlibrary);
 				
-		TextView text = (TextView) findViewById(R.id.textView1);
+		text = (TextView) findViewById(R.id.textView1);
 		text.setText("User Library");
 		list1 = (ListView) findViewById(R.id.listView1);
 
 		regenerateStoredLibrary();
+		if (library.getSongs().size() == 0) {
+			text.setText("User Library (empty)");	
+		}
 		updateView();
 
 		list1.setTextFilterEnabled(true);
@@ -212,6 +216,11 @@ public class MusicalLibrary extends Activity {
 		arrayAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, songs);
 		list1.setAdapter(arrayAdapter);
+		if (library.getSongs().size() == 0) {
+			text.setText("User Library (empty)");	
+		} else {
+			text.setText("User Library");
+		}
 	}
 
 	public void persistStorage() {
