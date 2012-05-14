@@ -46,30 +46,30 @@ public class MusicalSketches extends Activity {
 		super.onResume();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, DELETE, Menu.NONE, "DELETE");
-		menu.add(Menu.NONE, SORT, Menu.NONE, "SORT");
-		menu.add(Menu.NONE, HELP, Menu.NONE, "HELP!!!");
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		super.onCreateOptionsMenu(menu);
+//		menu.add(Menu.NONE, DELETE, Menu.NONE, "DELETE");
+//		menu.add(Menu.NONE, SORT, Menu.NONE, "SORT");
+//		menu.add(Menu.NONE, HELP, Menu.NONE, "HELP!!!");
+//		return true;
+//	}
 
-	public void createHelpDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("I have no help for you here.")
-		       .setCancelable(true)
-		       .setPositiveButton("Sorry!", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-	
-
-	public static final int DELETE = 1;
-	public static final int SORT = 2;
-	public static final int HELP = 3;
+//	public void createHelpDialog() {
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		builder.setMessage("I have no help for you here.")
+//		       .setCancelable(true)
+//		       .setPositiveButton("Sorry!", new DialogInterface.OnClickListener() {
+//		           public void onClick(DialogInterface dialog, int id) {
+//		                dialog.cancel();
+//		           }
+//		       });
+//		AlertDialog alert = builder.create();
+//		alert.show();
+//	}
+//	
+//
+//	public static final int DELETE = 1;
+//	public static final int SORT = 2;
+//	public static final int HELP = 3;
 }
