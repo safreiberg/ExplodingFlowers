@@ -32,7 +32,7 @@ import com.MusicalSketches.datarep.Song;
 
 public class EditModeLegacy extends Activity {
 	enum placement_objects {
-		left_note, middle_note, right_note, sharp, flat, natural
+		eighth_note, quarter_note, half_note, sharp, flat, natural, eighth_rest, quarter_rest, half_rest
 	}
 
 	enum states {
@@ -45,6 +45,7 @@ public class EditModeLegacy extends Activity {
 	ImageButton right_note;
 	ImageButton sharp_button;
 	ImageButton natural_button;
+	Button rests_button;
 	ImageButton flat_button;
 	TextView meter_disp;
 	ImageButton trash_button;
@@ -52,9 +53,9 @@ public class EditModeLegacy extends Activity {
 	ImageView music_score;
 	ImageButton right_button;
 	ImageButton left_button;
+	boolean inNotesMode = true; // false when the rests are showing
 	public static final int MAX_NOTES_ONSCREEN = 10;
 	Song song = null;
-
 	states state = states.wait;
 
 	View selected_view;
@@ -63,6 +64,7 @@ public class EditModeLegacy extends Activity {
 	placement_objects type_selected;
 	View[] notes = new View[MAX_NOTES_ONSCREEN];
 	View[] annotations = new View[MAX_NOTES_ONSCREEN];
+	View[] dynamics = new View[MAX_NOTES_ONSCREEN];
 	int screen_number = 0; // this increments as you screen to the right. min =
 							// 0.
 
@@ -76,7 +78,7 @@ public class EditModeLegacy extends Activity {
 		middle_note = (ImageButton) findViewById(R.id.middle_note);
 		right_note = (ImageButton) findViewById(R.id.right_note);
 		ImageButton more_notes = (ImageButton) findViewById(R.id.more_notes);
-		Button rests_button = (Button) findViewById(R.id.rests_button);
+		rests_button = (Button) findViewById(R.id.rests_button);
 		ImageButton record_button = (ImageButton) findViewById(R.id.record_button);
 		Button dynamics_button = (Button) findViewById(R.id.dynamics_button);
 		ImageButton slurs_button = (ImageButton) findViewById(R.id.slurs_button);
@@ -92,14 +94,14 @@ public class EditModeLegacy extends Activity {
 		song = (Song) getIntent().getSerializableExtra("song object");
 
 		addClefMeterKey(song);
-		
+
 		class left_arrow_button_click implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 				generateScreen(screen_number - 1);
 			}
 		}
-		
+
 		class right_arrow_button_click implements OnClickListener {
 			@Override
 			public void onClick(View v) {
@@ -114,13 +116,50 @@ public class EditModeLegacy extends Activity {
 				if (state == states.wait) {
 					state = states.selected_to_place;
 					button_clicked = true;
-					selected_view = select(R.drawable.eigth_note_transparent);
-					((ImageButton) arg0)
-							.setImageResource(R.drawable.eigth_note_inverted);
-					type_selected = placement_objects.left_note;
+					if (inNotesMode) {
+						selected_view = select(R.drawable.eigth_note_transparent);
+						((ImageButton) arg0)
+								.setImageResource(R.drawable.eigth_note_inverted);
+						type_selected = placement_objects.eighth_note;
+					} else {
+						selected_view = select(R.drawable.eighth_rest);
+						((ImageButton) arg0)
+								.setImageResource(R.drawable.eighth_rest_inverted);
+						type_selected = placement_objects.eighth_rest;
+					}
 				} else {
 					state = states.wait;
 					unclickAll();
+				}
+			}
+		}
+		;
+		class rest_click implements OnClickListener {
+			@Override
+			public void onClick(View arg0) {
+				// this should just toggle the images.
+				// it also unclicks everything for safety TODO is this
+				// necessary????
+				unclickAll();
+				state = states.wait;
+				// it also changes its text depending on what's showing.
+				if (rests_button.getText().equals("Rests")) {
+					// then we should show rests and change the text to Notes
+					rests_button.setText("Notes");
+					inNotesMode = false;
+					left_note.setImageResource(R.drawable.eighth_rest);
+					middle_note.setImageResource(R.drawable.quarter_rest);
+					right_note.setImageResource(R.drawable.half_rest);
+				} else {
+					// then we should show notes and change the text to Rests
+					inNotesMode = true;
+					rests_button.setText("Rests");
+					left_note
+							.setImageResource(R.drawable.eigth_note_transparent);
+					middle_note
+							.setImageResource(R.drawable.quarter_note_transparent);
+					right_note
+							.setImageResource(R.drawable.half_note_transparent);
 				}
 			}
 		}
@@ -132,10 +171,17 @@ public class EditModeLegacy extends Activity {
 				if (state == states.wait) {
 					state = states.selected_to_place;
 					button_clicked = true;
-					selected_view = select(R.drawable.quarter_note_transparent);
-					((ImageButton) arg0)
-							.setImageResource(R.drawable.quarter_note_inverted);
-					type_selected = placement_objects.middle_note;
+					if (inNotesMode) {
+						selected_view = select(R.drawable.quarter_note_transparent);
+						((ImageButton) arg0)
+								.setImageResource(R.drawable.quarter_note_inverted);
+						type_selected = placement_objects.quarter_note;
+					} else {
+						selected_view = select(R.drawable.quarter_rest);
+						((ImageButton) arg0)
+								.setImageResource(R.drawable.quarter_rest_inverted);
+						type_selected = placement_objects.quarter_rest;
+					}
 				} else {
 					state = states.wait;
 					unclickAll();
@@ -150,10 +196,17 @@ public class EditModeLegacy extends Activity {
 				if (state == states.wait) {
 					button_clicked = true;
 					state = states.selected_to_place;
-					selected_view = select(R.drawable.half_note_transparent);
-					((ImageButton) arg0)
-							.setImageResource(R.drawable.half_note_inverted);
-					type_selected = placement_objects.right_note;
+					if (inNotesMode) {
+						selected_view = select(R.drawable.half_note_transparent);
+						((ImageButton) arg0)
+								.setImageResource(R.drawable.half_note_inverted);
+						type_selected = placement_objects.half_note;
+					} else {
+						selected_view = select(R.drawable.half_rest);
+						((ImageButton) arg0)
+								.setImageResource(R.drawable.half_rest_inverted);
+						type_selected = placement_objects.half_rest;
+					}
 				} else {
 					state = states.wait;
 					unclickAll();
@@ -262,6 +315,7 @@ public class EditModeLegacy extends Activity {
 		trash_button.setOnClickListener(new trash_click());
 		left_button.setOnClickListener(new left_arrow_button_click());
 		right_button.setOnClickListener(new right_arrow_button_click());
+		rests_button.setOnClickListener(new rest_click());
 
 		dynamics_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -364,7 +418,7 @@ public class EditModeLegacy extends Activity {
 							// here's where we need a new screen. we should
 							// generate the new screen
 							// then process the click as normal?
-							//generateScreen(screen_number + 1);
+							// generateScreen(screen_number + 1);
 							return false;
 						}
 						int staff_line = 0;
@@ -373,6 +427,11 @@ public class EditModeLegacy extends Activity {
 								staff_line = j;
 								continue;
 							}
+						}
+						if (!inNotesMode) {
+							// all the rests should go at the same height, which
+							// is staff_lines[2]
+							staff_line = 3;
 						}
 						params.topMargin = NoteFrequencies.staff_lines[staff_line] - 30;
 						params.leftMargin = 30 + (i + 1) * 60;
@@ -400,8 +459,10 @@ public class EditModeLegacy extends Activity {
 						notes[i].getHitRect(hitSpace);
 						if (hit(x, y, hitSpace)) {
 							// hit!
-							((ImageView) notes[i])
-									.setBackgroundColor(Color.argb(50, 255, 230, 100)); //should be a more neutral yellow
+							((ImageView) notes[i]).setBackgroundColor(Color
+									.argb(50, 255, 230, 100)); // should be a
+																// more neutral
+																// yellow
 							selected_view = notes[i];
 							Log.d("", "Selected view null (selectin)? "
 									+ Boolean.toString(selected_view == null));
@@ -420,7 +481,8 @@ public class EditModeLegacy extends Activity {
 						if (hit(x, y, hitSpace)) {
 							// hit!
 							((ImageView) annotations[i])
-									.setBackgroundColor(Color.argb(50, 255, 230, 100)); //more neutral yellow
+									.setBackgroundColor(Color.argb(50, 255,
+											230, 100)); // more neutral yellow
 							selected_view = annotations[i];
 							type_selected = placement_objects.sharp;
 							state = states.selected_to_place;
@@ -450,7 +512,8 @@ public class EditModeLegacy extends Activity {
 		// then redisplay an overlapping note and arrows as necessary.
 		// NB: savePage() must occur before reassigning screen_number
 		this.savePage();
-		Toast.makeText(getApplicationContext(), "Song length: " + song.size(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(getApplicationContext(), "Song length: " + song.size(),
+				Toast.LENGTH_SHORT).show();
 		this.screen_number = number;
 		if (this.screen_number > 0) {
 			this.left_button.setVisibility(View.VISIBLE);
@@ -462,7 +525,7 @@ public class EditModeLegacy extends Activity {
 			this.meter_disp.setVisibility(View.VISIBLE);
 		}
 		// show the right button if there are more notes off the page.
-		if (this.song.size() >= (this.screen_number+1) * MAX_NOTES_ONSCREEN) {
+		if (this.song.size() >= (this.screen_number + 1) * MAX_NOTES_ONSCREEN) {
 			this.right_button.setVisibility(View.VISIBLE);
 		} else {
 			this.right_button.setVisibility(View.INVISIBLE);
@@ -475,9 +538,13 @@ public class EditModeLegacy extends Activity {
 		for (View v : annotations) {
 			group.removeView(v);
 		}
+		for (View v : dynamics) {
+			group.removeView(v);
+		}
+		this.dynamics = new View[MAX_NOTES_ONSCREEN];
 		this.notes = new View[MAX_NOTES_ONSCREEN];
 		this.annotations = new View[MAX_NOTES_ONSCREEN];
-		
+
 		// we do this by duplicating and hopefully replacing all of the
 		// uploadFromSong code.
 		int g = 0;
@@ -502,7 +569,9 @@ public class EditModeLegacy extends Activity {
 					y = NoteFrequencies.staff_lines[i] - 30;
 				}
 			}
-
+			if (n.isRest()) {
+				rests_button.performClick();
+			}
 			if (l == 0.125) {
 				left_note.performClick();
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
@@ -598,136 +667,26 @@ public class EditModeLegacy extends Activity {
 				unclickAll();
 			}
 			g++;
-		}
-	}
-
-	@Deprecated
-	// Replace with generateScreen
-	public void uploadFromSong(Song s) {
-		int g = 0;
-		for (Note n : s.getNotes().getNotes()) {
-			Log.d("", "adding note");
-			double freq = n.getPitch();
-			double l = n.getLength();
-			double x = 20 + (g + 1) * 60;
-			Log.d("", "" + x);
-			String str = NoteFrequencies.freqToString.get(freq);
-			Log.d("", str);
-			str = str.substring(0, 2);
-			Log.d("", str);
-			double y = 0;
-			for (int i = 0; i < NoteFrequencies.staff_notes.length; i++) {
-				if (NoteFrequencies.staff_notes[i].equals(str)) {
-					y = NoteFrequencies.staff_lines[i] - 30;
-				}
+			if (n.isRest()) {
+				rests_button.performClick();
 			}
-
-			if (l == 0.125) {
-				left_note.performClick();
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
-				// remove any previous annotation there
-				notes[g] = selected_view;
-				selected_view.setLayoutParams(params);
-				group.removeView(selected_view);
-				group.addView(selected_view);
-				selected_view.setTag(type_selected);
-				state = states.wait;
-				unclickAll();
-			} else if (l == 0.25) {
-				middle_note.performClick();
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
-				// remove any previous annotation there
-				notes[g] = selected_view;
-				selected_view.setLayoutParams(params);
-				group.removeView(selected_view);
-				group.addView(selected_view);
-				selected_view.setTag(type_selected);
-				state = states.wait;
-				unclickAll();
-			} else if (l == 0.5) {
-				right_note.performClick();
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
-				// remove any previous annotation there
-				notes[g] = selected_view;
-				selected_view.setLayoutParams(params);
-				group.removeView(selected_view);
-				group.addView(selected_view);
-				selected_view.setTag(type_selected);
-				state = states.wait;
-				unclickAll();
-			}
-			str = NoteFrequencies.freqToString.get(freq);
-			Log.d("", "str value: " + str);
-			if (str.endsWith("sharp")) {
-				Log.wtf("", "Clicking sharp");
-				sharp_button.performClick();
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
-				// remove any previous annotation there
-				annotations[g] = selected_view;
-				selected_view.setLayoutParams(params);
-				group.removeView(selected_view);
-				group.addView(selected_view);
-				selected_view.setTag(type_selected);
-				state = states.wait;
-				unclickAll();
-			} else if (str.endsWith("flat")) {
-				flat_button.performClick();
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
-				// remove any previous annotation there
-				annotations[g] = selected_view;
-				selected_view.setLayoutParams(params);
-				group.removeView(selected_view);
-				group.addView(selected_view);
-				selected_view.setTag(type_selected);
-				state = states.wait;
-				unclickAll();
-			} else if (str.endsWith("natural")) {
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-						RelativeLayout.LayoutParams.WRAP_CONTENT,
-						RelativeLayout.LayoutParams.WRAP_CONTENT);
-				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
-				// remove any previous annotation there
-				annotations[g] = selected_view;
-				selected_view.setLayoutParams(params);
-				group.removeView(selected_view);
-				group.addView(selected_view);
-				selected_view.setTag(type_selected);
-				state = states.wait;
-				unclickAll();
-			}
-			g++;
 		}
 	}
 
 	public void unclickAll() {
 		Log.d("", "Unclicking all");
-		left_note.setImageResource(R.drawable.eigth_note);
-		middle_note.setImageResource(R.drawable.quarter_note);
-		right_note.setImageResource(R.drawable.half_note);
-		sharp_button.setImageResource(R.drawable.sharp);
-		flat_button.setImageResource(R.drawable.flat);
-		natural_button.setImageResource(R.drawable.natural);
+		if (inNotesMode) {
+			left_note.setImageResource(R.drawable.eigth_note_transparent);
+			middle_note.setImageResource(R.drawable.quarter_note_transparent);
+			right_note.setImageResource(R.drawable.half_note_transparent);
+		} else {
+			left_note.setImageResource(R.drawable.eighth_rest);
+			middle_note.setImageResource(R.drawable.quarter_rest);
+			right_note.setImageResource(R.drawable.half_rest);
+		}
+		sharp_button.setImageResource(R.drawable.sharp_transparent);
+		flat_button.setImageResource(R.drawable.flat_transparent);
+		natural_button.setImageResource(R.drawable.natural_transparent);
 		selected_view = null;
 		type_selected = null;
 		for (View v : notes) {
@@ -766,7 +725,7 @@ public class EditModeLegacy extends Activity {
 	public int nextNote() {
 		for (int i = 0; i < this.notes.length; i++) {
 			if (notes[i] == null) {
-				if (i == this.notes.length-1) {
+				if (i == this.notes.length - 1) {
 					this.right_button.setVisibility(View.VISIBLE);
 				}
 				return i;
@@ -983,14 +942,25 @@ public class EditModeLegacy extends Activity {
 				pitch = NoteFrequencies.frequencyMap.get(name).doubleValue();
 			}
 			Log.d("", "Type of note: " + ((ImageView) notes[i]).getTag());
-			if (((ImageView) notes[i]).getTag() == placement_objects.left_note) {
+			placement_objects tag = (placement_objects) ((ImageView) notes[i])
+					.getTag();
+			if (tag == placement_objects.eighth_note
+					|| tag == placement_objects.eighth_rest) {
 				length = 0.125;
-			} else if (((ImageView) notes[i]).getTag() == placement_objects.middle_note) {
+			} else if (tag == placement_objects.quarter_note
+					|| tag == placement_objects.quarter_rest) {
 				length = 0.25;
-			} else if (((ImageView) notes[i]).getTag() == placement_objects.right_note) {
+			} else if (tag == placement_objects.half_note
+					|| tag == placement_objects.half_rest) {
 				length = 0.5;
 			}
-			return new Note(pitch, length, name);
+			Note n = new Note(pitch, length, name);
+			if (tag == placement_objects.eighth_rest
+					|| tag == placement_objects.half_rest
+					|| tag == placement_objects.quarter_rest) {
+				n.setRest(true);
+			}
+			return n;
 		}
 		return null;
 	}

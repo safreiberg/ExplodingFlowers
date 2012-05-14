@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/eigth_note"
         android:scaleType="center"
-        android:src="@drawable/eigth_note" />
+        android:src="@drawable/eigth_note_transparent" />
 
     <ImageButton
         android:id="@+id/middle_note"
@@ -20,7 +20,7 @@
         android:layout_toRightOf="@id/left_note"
         android:contentDescription="@string/quarter_note"
         android:scaleType="center"
-        android:src="@drawable/quarter_note" />
+        android:src="@drawable/quarter_note_transparent" />
 
     <ImageButton
         android:id="@+id/right_note"
@@ -29,7 +29,7 @@
         android:layout_toRightOf="@id/middle_note"
         android:contentDescription="@string/half_note"
         android:scaleType="center"
-        android:src="@drawable/half_note" />
+        android:src="@drawable/half_note_transparent" />
 
     <ImageButton
         android:id="@+id/more_notes"
@@ -79,7 +79,7 @@
         android:layout_width="wrap_content"
         android:contentDescription="@string/slurs_button"
         android:layout_toRightOf="@id/dynamics_button"
-        android:src="@drawable/slur"
+        android:src="@drawable/slur_transparent"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true" />
@@ -117,7 +117,7 @@
         android:layout_width="wrap_content"
         android:contentDescription="@string/sharp_button"
         android:layout_toRightOf="@id/slurs_button"
-        android:src="@drawable/sharp"
+        android:src="@drawable/sharp_transparent"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_alignParentBottom="true" />
@@ -127,7 +127,7 @@
         android:layout_width="wrap_content"
         android:contentDescription="@string/flat_button"
         android:layout_toRightOf="@id/sharp_button"
-        android:src="@drawable/flat"
+        android:src="@drawable/flat_transparent"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_alignParentBottom="true" />
@@ -137,7 +137,7 @@
         android:layout_width="wrap_content"
         android:contentDescription="@string/natural_button"
         android:layout_toRightOf="@id/flat_button"
-        android:src="@drawable/natural"
+        android:src="@drawable/natural_transparent"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_alignParentBottom="true" />

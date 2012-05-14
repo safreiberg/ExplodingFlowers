@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.MusicalSketches.EditModeLegacy.states;
 import com.MusicalSketches.datarep.Note;
 import com.MusicalSketches.datarep.NoteFrequencies;
 import com.MusicalSketches.datarep.Song;
@@ -40,8 +41,14 @@ public class PlaybackModeLegacy extends Activity {
 	ViewGroup group;
 	ImageButton right_button;
 	ImageButton left_button;
+	TextView meter_disp;
+	ImageView clef_image;
 	Timer arrowTimer;
-	int[] arrowLocations = new int[] { 110, 210, 310, 410, 510, 610 };
+	public static final int MAX_NOTES_ONSCREEN = 10;
+	int screen_number = 0;
+	View[] notes = new View[MAX_NOTES_ONSCREEN];
+	View[] annotations = new View[MAX_NOTES_ONSCREEN];
+	View[] dynamics = new View[MAX_NOTES_ONSCREEN];
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,8 @@ public class PlaybackModeLegacy extends Activity {
 		arrow = (ImageView) findViewById(R.id.arrow_indicator);
 		right_button = (ImageButton) findViewById(R.id.right_arrow);
 		left_button = (ImageButton) findViewById(R.id.left_arrow);
+		clef_image = (ImageView) findViewById(R.id.clef_image);
+		meter_disp = (TextView) findViewById(R.id.meter_text);
 
 		addClefMeterKey(song);
 		genTone();
@@ -61,6 +70,20 @@ public class PlaybackModeLegacy extends Activity {
 		ImageButton forward_button = (ImageButton) findViewById(R.id.forward_button);
 		b = (ImageButton) findViewById(R.id.play_pause_button);
 		group = (ViewGroup) findViewById(R.id.edit_layout);
+
+		class left_arrow_button_click implements OnClickListener {
+			@Override
+			public void onClick(View v) {
+				generateScreen(screen_number - 1);
+			}
+		}
+
+		class right_arrow_button_click implements OnClickListener {
+			@Override
+			public void onClick(View v) {
+				generateScreen(screen_number + 1);
+			}
+		}
 
 		play_pause.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -90,18 +113,59 @@ public class PlaybackModeLegacy extends Activity {
 						.getPlaybackHeadPosition());
 			}
 		});
-
-		uploadFromSong(song);
+		left_button.setOnClickListener(new left_arrow_button_click());
+		right_button.setOnClickListener(new right_arrow_button_click());
+		generateScreen(0);
 	}
 
-	public void uploadFromSong(Song s) {
+	private void generateScreen(int number) {
+		// plan here is to save all the shit onscreen
+		// then redisplay an overlapping note and arrows as necessary.
+		// NB: savePage() must occur before reassigning screen_number
+		this.screen_number = number;
+		if (this.screen_number > 0) {
+			this.left_button.setVisibility(View.VISIBLE);
+			this.clef_image.setVisibility(View.INVISIBLE);
+			this.meter_disp.setVisibility(View.INVISIBLE);
+		} else {
+			this.left_button.setVisibility(View.INVISIBLE);
+			this.clef_image.setVisibility(View.VISIBLE);
+			this.meter_disp.setVisibility(View.VISIBLE);
+		}
+		// show the right button if there are more notes off the page.
+		if (this.song.size() >= (this.screen_number + 1) * MAX_NOTES_ONSCREEN) {
+			this.right_button.setVisibility(View.VISIBLE);
+		} else {
+			this.right_button.setVisibility(View.INVISIBLE);
+		}
+		// before displaying anything, we hardcore clear the screen.
+		for (View v : notes) {
+			group.removeView(v);
+		}
+		for (View v : annotations) {
+			group.removeView(v);
+		}
+		for (View v : dynamics) {
+			group.removeView(v);
+		}
+		this.dynamics = new View[MAX_NOTES_ONSCREEN];
+		this.notes = new View[MAX_NOTES_ONSCREEN];
+		this.annotations = new View[MAX_NOTES_ONSCREEN];
+
+		// we do this by duplicating and hopefully replacing all of the
+		// uploadFromSong code.
 		int g = 0;
-		ViewGroup group = (ViewGroup) findViewById(R.id.edit_layout);
-		for (int loc = 0; loc < EditModeLegacy.MAX_NOTES_ONSCREEN; loc++) {
-			Note n = s.getNoteNum(EditModeLegacy.MAX_NOTES_ONSCREEN*screen + loc);
+		while (g < MAX_NOTES_ONSCREEN) {
+			Note n = this.song.getNoteNum(g + this.screen_number
+					* MAX_NOTES_ONSCREEN);
+			if (n == null) {
+				break;
+			}
 			Log.d("", "adding note");
 			double freq = n.getPitch();
 			double l = n.getLength();
+			double x = 20 + (g + 1) * 60;
+			Log.d("", "" + x);
 			String str = NoteFrequencies.freqToString.get(freq);
 			Log.d("", str);
 			str = str.substring(0, 2);
@@ -112,8 +176,9 @@ public class PlaybackModeLegacy extends Activity {
 					y = NoteFrequencies.staff_lines[i] - 30;
 				}
 			}
+
+			ImageView img = new ImageView(getApplicationContext());
 			if (l == 0.125) {
-				ImageView img = new ImageView(getApplicationContext());
 				img.setImageResource(R.drawable.eigth_note_transparent);
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
@@ -129,7 +194,6 @@ public class PlaybackModeLegacy extends Activity {
 				group.removeView(img);
 				group.addView(img);
 			} else if (l == 0.25) {
-				ImageView img = new ImageView(getApplicationContext());
 				img.setImageResource(R.drawable.quarter_note_transparent);
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
@@ -145,7 +209,6 @@ public class PlaybackModeLegacy extends Activity {
 				group.removeView(img);
 				group.addView(img);
 			} else if (l == 0.5) {
-				ImageView img = new ImageView(getApplicationContext());
 				img.setImageResource(R.drawable.half_note_transparent);
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
@@ -161,12 +224,15 @@ public class PlaybackModeLegacy extends Activity {
 				group.removeView(img);
 				group.addView(img);
 			}
-			double x = 20 + (g + 1) * 60;
+			if (img != null) {
+				this.notes[g] = img;
+			}
+			x = 20 + (g + 1) * 60;
 			Log.d("", "" + x);
 			str = NoteFrequencies.freqToString.get(freq);
 			Log.d("", "str value: " + str);
+			img = new ImageView(getApplicationContext());
 			if (str.endsWith("sharp")) {
-				ImageView img = new ImageView(getApplicationContext());
 				img.setImageResource(R.drawable.sharp_transparent);
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
@@ -181,7 +247,6 @@ public class PlaybackModeLegacy extends Activity {
 				img.setLayoutParams(params);
 				group.addView(img);
 			} else if (str.endsWith("flat")) {
-				ImageView img = new ImageView(getApplicationContext());
 				img.setImageResource(R.drawable.flat_transparent);
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
@@ -196,7 +261,6 @@ public class PlaybackModeLegacy extends Activity {
 				img.setLayoutParams(params);
 				group.addView(img);
 			} else if (str.endsWith("natural")) {
-				ImageView img = new ImageView(getApplicationContext());
 				img.setImageResource(R.drawable.natural_transparent);
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
@@ -211,6 +275,9 @@ public class PlaybackModeLegacy extends Activity {
 				img.setLayoutParams(params);
 				group.removeView(img);
 				group.addView(img);
+			}
+			if (img != null) {
+				this.annotations[g] = img;
 			}
 			g++;
 		}
@@ -248,11 +315,9 @@ public class PlaybackModeLegacy extends Activity {
 	public void addClefMeterKey(Song s) {
 		int clef = s.getClef();
 		if (clef == 1) {
-			((ImageView) findViewById(R.id.clef_image))
-					.setImageResource(R.drawable.treble_clef);
+			clef_image.setImageResource(R.drawable.treble_clef);
 		}
-		((TextView) findViewById(R.id.meter_text)).setText("" + s.getMeterTop()
-				+ "\n" + s.getMeterBottom());
+		meter_disp.setText("" + s.getMeterTop() + "\n" + s.getMeterBottom());
 	}
 
 	public void initArrowTimer() {
@@ -271,6 +336,25 @@ public class PlaybackModeLegacy extends Activity {
 		for (Note n : song.getNotes().getNotes()) {
 			time += n.getLength() * 1000;
 			g++;
+			if (g == MAX_NOTES_ONSCREEN) {
+				// this means that we are scheduling the arrow for the next
+				// screen
+				g = 0;
+				// now we need to click the next screen button.
+				arrowTimer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						class NextScreenClicker implements Runnable {
+							@Override
+							public void run() {
+								right_button.callOnClick();
+							}
+
+						}
+						runOnUiThread(new NextScreenClicker());
+					}
+				}, time);
+			}
 			final int x = 20 + (g + 1) * 60;
 			arrowTimer.schedule(new TimerTask() {
 				@Override
