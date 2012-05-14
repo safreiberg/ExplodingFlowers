@@ -1,12 +1,17 @@
 package com.MusicalSketches;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,13 +21,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.MusicalSketches.SongSelect.MyOnItemSelectedListener;
 import com.MusicalSketches.datarep.KeySignatures;
 import com.MusicalSketches.datarep.Note;
 import com.MusicalSketches.datarep.NoteFrequencies;
@@ -38,7 +47,9 @@ public class EditModeLegacy extends Activity {
 	}
 
 	ViewGroup group;
+	int offset_left = 80;
 	ImageButton left_note;
+	TextView tempo_text;
 	ImageButton middle_note;
 	ImageButton right_note;
 	ImageButton sharp_button;
@@ -46,6 +57,7 @@ public class EditModeLegacy extends Activity {
 	Button rests_button;
 	ImageButton flat_button;
 	TextView meter_disp;
+	TextView title_text;
 	ImageButton trash_button;
 	ImageView clef_image;
 	ImageView key_image;
@@ -56,7 +68,7 @@ public class EditModeLegacy extends Activity {
 	boolean inNotesMode = true; // false when the rests are showing
 	boolean placingDynamic = false; // only true when the screen is grayed
 									// (that's the plan anyway)
-	public static final int MAX_NOTES_ONSCREEN = 10;
+	public static final int MAX_NOTES_ONSCREEN = 9;
 	Song song = null;
 	states state = states.wait;
 
@@ -95,11 +107,20 @@ public class EditModeLegacy extends Activity {
 		left_button = (ImageButton) findViewById(R.id.left_arrow);
 		gray_cover = (ImageView) findViewById(R.id.gray_cover);
 		gray_cover.setVisibility(View.INVISIBLE);
+		tempo_text = (TextView) findViewById(R.id.bpm_text);
+		title_text = (TextView) findViewById(R.id.title_text);
 
 		song = (Song) getIntent().getSerializableExtra("song object");
 
 		addClefMeterKey(song);
 
+		class record_click implements OnClickListener {
+			@Override
+			public void onClick(View v) {
+				createRecordDialog();
+			}
+		}
+		record_button.setOnClickListener(new record_click());
 		class left_arrow_button_click implements OnClickListener {
 			@Override
 			public void onClick(View v) {
@@ -119,6 +140,31 @@ public class EditModeLegacy extends Activity {
 				generateScreen(screen_number + 1, false);
 			}
 		}
+
+		meter_disp.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				openMeterSpinner();
+			}
+
+		});
+
+		tempo_text.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				changeTempo();
+			}
+		});
+		
+		title_text.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				changeTitle();
+			}
+		});
 
 		class eigth_click implements OnClickListener {
 
@@ -144,7 +190,7 @@ public class EditModeLegacy extends Activity {
 				}
 			}
 		}
-		;
+
 		class rest_click implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
@@ -174,7 +220,7 @@ public class EditModeLegacy extends Activity {
 				unclickAll();
 			}
 		}
-		;
+
 		class quarter_click implements OnClickListener {
 
 			@Override
@@ -199,7 +245,7 @@ public class EditModeLegacy extends Activity {
 				}
 			}
 		}
-		;
+
 		class half_click implements OnClickListener {
 
 			@Override
@@ -224,7 +270,7 @@ public class EditModeLegacy extends Activity {
 				}
 			}
 		}
-		;
+
 		class sharp_click implements OnClickListener {
 
 			@Override
@@ -242,7 +288,7 @@ public class EditModeLegacy extends Activity {
 				}
 			}
 		}
-		;
+
 		class natural_click implements OnClickListener {
 
 			@Override
@@ -260,7 +306,7 @@ public class EditModeLegacy extends Activity {
 				}
 			}
 		}
-		;
+
 		class flat_click implements OnClickListener {
 
 			@Override
@@ -278,7 +324,6 @@ public class EditModeLegacy extends Activity {
 				}
 			}
 		}
-		;
 
 		class trash_click implements OnClickListener {
 
@@ -310,12 +355,10 @@ public class EditModeLegacy extends Activity {
 					state = states.wait;
 					unclickAll();
 				} else {
-					Toast.makeText(getApplicationContext(), "Delete piece?",
-							Toast.LENGTH_SHORT).show();
+					createAreYouSure();
 				}
 			}
 		}
-		;
 
 		left_note.setOnClickListener(new eigth_click());
 		middle_note.setOnClickListener(new quarter_click());
@@ -339,8 +382,8 @@ public class EditModeLegacy extends Activity {
 				createClefDialog();
 			}
 		});
-		key_image.setOnClickListener(new View.OnClickListener(){
-			public void onClick(View v){
+		key_image.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
 				createKeyDialog();
 			}
 		});
@@ -374,7 +417,7 @@ public class EditModeLegacy extends Activity {
 									|| type_selected == placement_objects.natural
 									|| type_selected == placement_objects.sharp) {
 								// need to find an annotation spot
-								params.leftMargin = 20 + (i + 1) * 60;
+								params.leftMargin = offset_left + (i + 1) * 60;
 								// remove any previous annotation there
 								if (annotations[i] != null) {
 									group.removeView(annotations[i]);
@@ -445,7 +488,8 @@ public class EditModeLegacy extends Activity {
 							// thus we add it...
 							int loc = (int) ((event_x - 30) / 60 - 1);
 							params.topMargin = 264;
-							params.leftMargin = 30 + (loc + 1) * 60;
+							params.leftMargin = offset_left + 10 + (loc + 1)
+									* 60;
 							Log.d("",
 									"Placing a dynamic: "
 											+ selected_view.getTag());
@@ -488,15 +532,18 @@ public class EditModeLegacy extends Activity {
 								|| staff_line == NoteFrequencies.staff_lines.length - 1) {
 							// need a new picture.
 							if (type_selected == placement_objects.eighth_note) {
-								((ImageView)selected_view).setImageResource(R.drawable.eigth_note_transparent_low);
+								((ImageView) selected_view)
+										.setImageResource(R.drawable.eigth_note_transparent_low);
 							} else if (type_selected == placement_objects.quarter_note) {
-								((ImageView)selected_view).setImageResource(R.drawable.quarter_note_transparent_low);
+								((ImageView) selected_view)
+										.setImageResource(R.drawable.quarter_note_transparent_low);
 							} else if (type_selected == placement_objects.half_note) {
-								((ImageView)selected_view).setImageResource(R.drawable.half_note_transparent_low);
-							} 
+								((ImageView) selected_view)
+										.setImageResource(R.drawable.half_note_transparent_low);
+							}
 						}
 						params.topMargin = NoteFrequencies.staff_lines[staff_line] - 30;
-						params.leftMargin = 30 + (i + 1) * 60;
+						params.leftMargin = offset_left + 10 + (i + 1) * 60;
 						Log.d("", "Setting notes[" + i + "]");
 						notes[i] = selected_view;
 					}
@@ -641,9 +688,9 @@ public class EditModeLegacy extends Activity {
 			}
 			Log.d("", "adding note");
 			double freq = n.getPitch();
-			Log.d("","Frequency: " + freq);
+			Log.d("", "Frequency: " + freq);
 			double l = n.getLength();
-			double x = 20 + (g + 1) * 60;
+			double x = offset_left + 10 + (g + 1) * 60;
 			Log.d("", "" + x);
 			String str = NoteFrequencies.freqToString.get(freq);
 			Log.d("", str);
@@ -666,22 +713,24 @@ public class EditModeLegacy extends Activity {
 					|| y == NoteFrequencies.staff_lines[NoteFrequencies.staff_lines.length - 1] - 30) {
 				line_through = true;
 			}
-			Log.d("","");
+			Log.d("", "");
 			if (n.isRest()) {
 				inNotesMode = false;
 			}
 			if (l == 0.125) {
 				left_note.performClick();
 				if (!line_through) {
-					((ImageView)selected_view).setImageResource(R.drawable.eigth_note_transparent);
+					((ImageView) selected_view)
+							.setImageResource(R.drawable.eigth_note_transparent);
 				} else {
-					((ImageView)selected_view).setImageResource(R.drawable.eigth_note_transparent_low);
+					((ImageView) selected_view)
+							.setImageResource(R.drawable.eigth_note_transparent_low);
 				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = offset_left + 10 + (g + 1) * 60;
 				// remove any previous annotation there
 				notes[g] = selected_view;
 				selected_view.setLayoutParams(params);
@@ -693,15 +742,17 @@ public class EditModeLegacy extends Activity {
 			} else if (l == 0.25) {
 				middle_note.performClick();
 				if (!line_through) {
-					((ImageView)selected_view).setImageResource(R.drawable.quarter_note_transparent);
+					((ImageView) selected_view)
+							.setImageResource(R.drawable.quarter_note_transparent);
 				} else {
-					((ImageView)selected_view).setImageResource(R.drawable.quarter_note_transparent_low);
+					((ImageView) selected_view)
+							.setImageResource(R.drawable.quarter_note_transparent_low);
 				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = offset_left + 10 + (g + 1) * 60;
 				// remove any previous annotation there
 				notes[g] = selected_view;
 				selected_view.setLayoutParams(params);
@@ -713,15 +764,17 @@ public class EditModeLegacy extends Activity {
 			} else if (l == 0.5) {
 				right_note.performClick();
 				if (!line_through) {
-					((ImageView)selected_view).setImageResource(R.drawable.half_note_transparent);
+					((ImageView) selected_view)
+							.setImageResource(R.drawable.half_note_transparent);
 				} else {
-					((ImageView)selected_view).setImageResource(R.drawable.half_note_transparent_low);
+					((ImageView) selected_view)
+							.setImageResource(R.drawable.half_note_transparent_low);
 				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = offset_left + 10 + (g + 1) * 60;
 				// remove any previous annotation there
 				notes[g] = selected_view;
 				selected_view.setLayoutParams(params);
@@ -740,7 +793,7 @@ public class EditModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = offset_left + (g + 1) * 60;
 				// remove any previous annotation there
 				annotations[g] = selected_view;
 				selected_view.setLayoutParams(params);
@@ -755,7 +808,7 @@ public class EditModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = offset_left + (g + 1) * 60;
 				// remove any previous annotation there
 				annotations[g] = selected_view;
 				selected_view.setLayoutParams(params);
@@ -769,7 +822,7 @@ public class EditModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = offset_left + (g + 1) * 60;
 				// remove any previous annotation there
 				annotations[g] = selected_view;
 				selected_view.setLayoutParams(params);
@@ -804,7 +857,7 @@ public class EditModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = 264;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = offset_left + 10 + (g + 1) * 60;
 				// remove any previous annotation there
 				dynos[g] = selected_view;
 				selected_view.setLayoutParams(params);
@@ -935,85 +988,118 @@ public class EditModeLegacy extends Activity {
 		if (s == null) {
 			return;
 		}
+		int tempo = s.getTempo();
+		tempo_text.setText("" + tempo + " " + "BPM");
+		title_text.setText(s.getTitle());
 		int clef = s.getClef();
 		String[] keyList = KeySignatures.keyMap.get(s.getKey());
-		if (clef == 1) { //treble clef
+		if (clef == 1) { // treble clef
 			((ImageView) findViewById(R.id.clef_image))
 					.setImageResource(R.drawable.treble_clef);
-			
-			if (keyList[0] == "Sharp"){
-				if (keyList.length == 2){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1sharps);
-				} else if (keyList.length == 3){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2sharps);
-				}else if (keyList.length == 4){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3sharps);
-				}else if (keyList.length == 5){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4sharps);
-				}else if (keyList.length == 6){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5sharps);
-				}else if (keyList.length == 7){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6sharps);
-				}else if (keyList.length == 8){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7sharps);
+
+			if (keyList[0] == "Sharp") {
+				if (keyList.length == 2) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t1sharps);
+				} else if (keyList.length == 3) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t2sharps);
+				} else if (keyList.length == 4) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t3sharps);
+				} else if (keyList.length == 5) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t4sharps);
+				} else if (keyList.length == 6) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t5sharps);
+				} else if (keyList.length == 7) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t6sharps);
+				} else if (keyList.length == 8) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t7sharps);
 				}
-				
-			} else if (keyList[0] == "Flat"){
-				if (keyList.length == 2){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1flats);
-				} else if (keyList.length == 3){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2flats);
-				}else if (keyList.length == 4){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3flats);
-				}else if (keyList.length == 5){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4flats);
-				}else if (keyList.length == 6){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5flats);
-				}else if (keyList.length == 7){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6flats);
-				}else if (keyList.length == 8){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7flats);
+
+			} else if (keyList[0] == "Flat") {
+				if (keyList.length == 2) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t1flats);
+				} else if (keyList.length == 3) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t2flats);
+				} else if (keyList.length == 4) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t3flats);
+				} else if (keyList.length == 5) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t4flats);
+				} else if (keyList.length == 6) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t5flats);
+				} else if (keyList.length == 7) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t6flats);
+				} else if (keyList.length == 8) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.t7flats);
 				}
-			} else{ //C or A minor
-				((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+			} else { // C or A minor
+				((ImageView) findViewById(R.id.keysig_image))
+						.setImageResource(R.drawable.none);
 			}
-			
-		} else {//bass clef
-			if (keyList[0] == "Sharp"){
-				if (keyList.length == 2){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1sharps);
-				} else if (keyList.length == 3){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2sharps);
-				}else if (keyList.length == 4){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3sharps);
-				}else if (keyList.length == 5){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4sharps);
-				}else if (keyList.length == 6){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5sharps);
-				}else if (keyList.length == 7){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6sharps);
-				}else if (keyList.length == 8){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7sharps);
+
+		} else {// bass clef
+			if (keyList[0] == "Sharp") {
+				if (keyList.length == 2) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b1sharps);
+				} else if (keyList.length == 3) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b2sharps);
+				} else if (keyList.length == 4) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b3sharps);
+				} else if (keyList.length == 5) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b4sharps);
+				} else if (keyList.length == 6) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b5sharps);
+				} else if (keyList.length == 7) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b6sharps);
+				} else if (keyList.length == 8) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b7sharps);
 				}
-				
-			} else if (keyList[0] == "Flat"){
-				if (keyList.length == 2){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1flats);
-				} else if (keyList.length == 3){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2flats);
-				}else if (keyList.length == 4){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3flats);
-				}else if (keyList.length == 5){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4flats);
-				}else if (keyList.length == 6){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5flats);
-				}else if (keyList.length == 7){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6flats);
-				}else if (keyList.length == 8){
-					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7flats);
+
+			} else if (keyList[0] == "Flat") {
+				if (keyList.length == 2) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b1flats);
+				} else if (keyList.length == 3) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b2flats);
+				} else if (keyList.length == 4) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b3flats);
+				} else if (keyList.length == 5) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b4flats);
+				} else if (keyList.length == 6) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b5flats);
+				} else if (keyList.length == 7) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b6flats);
+				} else if (keyList.length == 8) {
+					((ImageView) findViewById(R.id.keysig_image))
+							.setImageResource(R.drawable.b7flats);
 				}
-			} else{ //C or A minor
-				((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+			} else { // C or A minor
+				((ImageView) findViewById(R.id.keysig_image))
+						.setImageResource(R.drawable.none);
 			}
 		}
 		meter_disp.setText("" + s.getMeterTop() + "\n" + s.getMeterBottom());
@@ -1062,7 +1148,7 @@ public class EditModeLegacy extends Activity {
 
 	public void createAreYouSure() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Are you sure??")
+		builder.setMessage("Delete Permanently?")
 				.setCancelable(true)
 				.setPositiveButton("Yes!",
 						new DialogInterface.OnClickListener() {
@@ -1141,7 +1227,8 @@ public class EditModeLegacy extends Activity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	public void createKeyDialog(){
+
+	public void createKeyDialog() {
 		final CharSequence[] keys = { "C", "G", "D", "A", "E", "B", "F#", "Db",
 				"Ab", "Eb", "Bb", "F", "A minor", "E minor", "B minor",
 				"F# minor", "Db minor", "Ab minor", "Eb minor", "Bb minor",
@@ -1153,81 +1240,111 @@ public class EditModeLegacy extends Activity {
 				song.setKey(item);
 				int c = song.getClef();
 				String[] keyList = KeySignatures.keyMap.get(song.getKey());
-				if (c == 1) { //treble clef
-					
-					if (keyList[0] == "Sharp"){
-						if (keyList.length == 2){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1sharps);
-						} else if (keyList.length == 3){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2sharps);
-						}else if (keyList.length == 4){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3sharps);
-						}else if (keyList.length == 5){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4sharps);
-						}else if (keyList.length == 6){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5sharps);
-						}else if (keyList.length == 7){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6sharps);
-						}else if (keyList.length == 8){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7sharps);
+				if (c == 1) { // treble clef
+
+					if (keyList[0] == "Sharp") {
+						if (keyList.length == 2) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t1sharps);
+						} else if (keyList.length == 3) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t2sharps);
+						} else if (keyList.length == 4) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t3sharps);
+						} else if (keyList.length == 5) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t4sharps);
+						} else if (keyList.length == 6) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t5sharps);
+						} else if (keyList.length == 7) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t6sharps);
+						} else if (keyList.length == 8) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t7sharps);
 						}
-						
-					} else if (keyList[0] == "Flat"){
-						if (keyList.length == 2){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1flats);
-						} else if (keyList.length == 3){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2flats);
-						}else if (keyList.length == 4){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3flats);
-						}else if (keyList.length == 5){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4flats);
-						}else if (keyList.length == 6){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5flats);
-						}else if (keyList.length == 7){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6flats);
-						}else if (keyList.length == 8){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7flats);
+
+					} else if (keyList[0] == "Flat") {
+						if (keyList.length == 2) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t1flats);
+						} else if (keyList.length == 3) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t2flats);
+						} else if (keyList.length == 4) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t3flats);
+						} else if (keyList.length == 5) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t4flats);
+						} else if (keyList.length == 6) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t5flats);
+						} else if (keyList.length == 7) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t6flats);
+						} else if (keyList.length == 8) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.t7flats);
 						}
-					} else{ //C or A minor
-						((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+					} else { // C or A minor
+						((ImageView) findViewById(R.id.keysig_image))
+								.setImageResource(R.drawable.none);
 					}
-					
-				} else {//bass clef
-					if (keyList[0] == "Sharp"){
-						if (keyList.length == 2){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1sharps);
-						} else if (keyList.length == 3){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2sharps);
-						}else if (keyList.length == 4){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3sharps);
-						}else if (keyList.length == 5){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4sharps);
-						}else if (keyList.length == 6){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5sharps);
-						}else if (keyList.length == 7){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6sharps);
-						}else if (keyList.length == 8){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7sharps);
+
+				} else {// bass clef
+					if (keyList[0] == "Sharp") {
+						if (keyList.length == 2) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b1sharps);
+						} else if (keyList.length == 3) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b2sharps);
+						} else if (keyList.length == 4) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b3sharps);
+						} else if (keyList.length == 5) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b4sharps);
+						} else if (keyList.length == 6) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b5sharps);
+						} else if (keyList.length == 7) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b6sharps);
+						} else if (keyList.length == 8) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b7sharps);
 						}
-						
-					} else if (keyList[0] == "Flat"){
-						if (keyList.length == 2){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1flats);
-						} else if (keyList.length == 3){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2flats);
-						}else if (keyList.length == 4){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3flats);
-						}else if (keyList.length == 5){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4flats);
-						}else if (keyList.length == 6){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5flats);
-						}else if (keyList.length == 7){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6flats);
-						}else if (keyList.length == 8){
-							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7flats);
+
+					} else if (keyList[0] == "Flat") {
+						if (keyList.length == 2) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b1flats);
+						} else if (keyList.length == 3) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b2flats);
+						} else if (keyList.length == 4) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b3flats);
+						} else if (keyList.length == 5) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b4flats);
+						} else if (keyList.length == 6) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b5flats);
+						} else if (keyList.length == 7) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b6flats);
+						} else if (keyList.length == 8) {
+							((ImageView) findViewById(R.id.keysig_image))
+									.setImageResource(R.drawable.b7flats);
 						}
-					} else{ //C or A minor
-						((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+					} else { // C or A minor
+						((ImageView) findViewById(R.id.keysig_image))
+								.setImageResource(R.drawable.none);
 					}
 				}
 			}
@@ -1275,7 +1392,7 @@ public class EditModeLegacy extends Activity {
 			} else {
 				staff_note_rep = NoteFrequencies.staff_notes;
 			}
-			Log.d("","staff_note_rep[0]: "+staff_note_rep[0]);
+			Log.d("", "staff_note_rep[0]: " + staff_note_rep[0]);
 			name = staff_note_rep[0] + annotation;
 			for (int j = 0; j < NoteFrequencies.staff_lines.length; j++) {
 				if (NoteFrequencies.staff_lines[j] > ((ImageView) notes[i])
@@ -1314,5 +1431,126 @@ public class EditModeLegacy extends Activity {
 			return n;
 		}
 		return null;
+	}
+
+	public void createRecordDialog() {
+		final View layout = View.inflate(this, R.layout.recording, null);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(layout);
+
+		final MediaRecorder recording = new android.media.MediaRecorder();
+		recording.setAudioSource(MediaRecorder.AudioSource.MIC); // can't test
+																	// this with
+																	// emulator
+																	// because
+																	// it has no
+																	// mic.
+																	// should
+																	// work in
+																	// phone
+		recording.start();
+
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				recording.stop();
+				// need to save the recording somewhere
+				recording.release();
+				Song s1 = new Song();
+				Log.d("", "new song make");
+				s1.setTitle("My Favorite Song");
+				Log.d("", "new song title");
+				s1.addNote(new Note(NoteFrequencies.getFrequency("e4"), 0.125,
+						"e4"));
+				Log.d("", "new note");
+				s1.addNote(new Note(NoteFrequencies.getFrequency("e5"), 0.25,
+						"e5"));
+				s1.addNote(new Note(NoteFrequencies.getFrequency("a4"), 0.5,
+						"a4"));
+				s1.addNote(new Note(NoteFrequencies.getFrequency("b4"), 0.125,
+						"b4"));
+				Log.d("", "all notes");
+				song = s1;
+				generateScreen(0, true);
+			}
+		});
+	}
+
+	private void openMeterSpinner() {
+		final CharSequence[] meters = getResources().getStringArray(
+				R.array.meter_array);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Choose New Meter");
+		builder.setItems(meters, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				if (meters[item].toString().length() >= 4) {
+					song.setMeter(12, 8);
+				} else {
+					String str = meters[item].toString();
+					Log.d("", "Meter (should be less than 12/8): " + str);
+					song.setMeter(Integer.valueOf(str.substring(0, 1)),
+							Integer.valueOf(str.substring(2, 3)));
+				}
+				meter_disp.setText("" + song.getMeterTop() + "\n"
+						+ song.getMeterBottom());
+			}
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+	private void changeTempo() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Change Tempo");
+		// Set an EditText view to get user input
+		final EditText input = new EditText(this);
+		alert.setView(input);
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString();
+				try {
+					song.setTempo(Integer.valueOf(value));
+					tempo_text.setText("" + song.getTempo() + " " + "BPM");
+				} catch (Exception e) {
+					
+				}
+			}
+		});
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
+		alert.show();
+	}
+	
+	private void changeTitle() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Change Title");
+		// Set an EditText view to get user input
+		final EditText input = new EditText(this);
+		alert.setView(input);
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString();
+				try {
+					song.setTitle(value);
+					title_text.setText(value);
+				} catch (Exception e) {
+					
+				}
+			}
+		});
+
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
+
+		alert.show();
 	}
 }

@@ -24,24 +24,6 @@
         android:src="@drawable/right_arrow" />
     
     <ImageButton
-        android:id="@+id/right_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:visibility="invisible"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/right_arrow" />
-    
-    <ImageButton
-        android:id="@+id/left_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:visibility="invisible"
-        android:src="@drawable/left_arrow" />
-    
-    <ImageButton
         android:id="@+id/left_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,7 +38,7 @@
         android:id="@+id/arrow_indicator"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="80dp"
         android:visibility="invisible"
         android:layout_marginTop="50dp"
         android:contentDescription="@string/music_score"

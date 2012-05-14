@@ -168,7 +168,7 @@ public class PlaybackModeLegacy extends Activity {
 			Log.d("", "adding note");
 			double freq = n.getPitch();
 			double l = n.getLength();
-			double x = 20 + (g + 1) * 60;
+			double x = 60 + (g + 1) * 60;
 			Log.d("", "" + x);
 			String str = NoteFrequencies.freqToString.get(freq);
 			Log.d("", str);
@@ -210,7 +210,7 @@ public class PlaybackModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = 60 + (g + 1) * 60;
 				// remove any previous annotation there
 				img.setLayoutParams(params);
 				group.removeView(img);
@@ -233,7 +233,7 @@ public class PlaybackModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = 60 + (g + 1) * 60;
 				// remove any previous annotation there
 				img.setLayoutParams(params);
 				group.removeView(img);
@@ -256,7 +256,7 @@ public class PlaybackModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = 60 + (g + 1) * 60;
 				// remove any previous annotation there
 				img.setLayoutParams(params);
 				group.removeView(img);
@@ -265,7 +265,7 @@ public class PlaybackModeLegacy extends Activity {
 			if (img != null) {
 				this.notes[g] = img;
 			}
-			x = 20 + (g + 1) * 60;
+			x = 60 + (g + 1) * 60;
 			Log.d("", "" + x);
 			str = NoteFrequencies.freqToString.get(freq);
 			Log.d("", "str value: " + str);
@@ -280,7 +280,7 @@ public class PlaybackModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = 60 + (g + 1) * 60;
 				// remove any previous annotation there
 				img.setLayoutParams(params);
 				group.addView(img);
@@ -294,7 +294,7 @@ public class PlaybackModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = 60 + (g + 1) * 60;
 				// remove any previous annotation there
 				img.setLayoutParams(params);
 				group.addView(img);
@@ -308,7 +308,7 @@ public class PlaybackModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = (int) y - 30;
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = 60 + (g + 1) * 60;
 				// remove any previous annotation there
 				img.setLayoutParams(params);
 				group.removeView(img);
@@ -338,7 +338,7 @@ public class PlaybackModeLegacy extends Activity {
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.topMargin = 264;
 				img.setVisibility(0);
-				params.leftMargin = 20 + (g + 1) * 60;
+				params.leftMargin = 60 + (g + 1) * 60;
 				// remove any previous annotation there
 				img.setLayoutParams(params);
 				group.removeView(img);
@@ -405,7 +405,7 @@ public class PlaybackModeLegacy extends Activity {
 				RelativeLayout.LayoutParams.WRAP_CONTENT,
 				RelativeLayout.LayoutParams.WRAP_CONTENT);
 		params.topMargin = (int) 50;
-		params.leftMargin = 80;
+		params.leftMargin = 120;
 		arrow.setLayoutParams(params);
 		group.addView(arrow);
 		arrow.setVisibility(0);
@@ -431,7 +431,7 @@ public class PlaybackModeLegacy extends Activity {
 					}
 				}, time);
 			}
-			final int x = 20 + (g + 1) * 60;
+			final int x = 60 + (g + 1) * 60;
 			arrowTimer.schedule(new TimerTask() {
 				@Override
 				public void run() {

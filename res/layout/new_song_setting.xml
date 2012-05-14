@@ -22,6 +22,7 @@
             android:id="@+id/editText1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Untitled"
             android:ems="10" >
 
             <requestFocus />
@@ -74,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:text="120"
             android:inputType="number" />
 
         <LinearLayout
