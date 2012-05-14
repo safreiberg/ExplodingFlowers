@@ -1,14 +1,11 @@
 package com.MusicalSketches;
 
-import java.util.Date;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.media.AudioRecord.OnRecordPositionUpdateListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -653,8 +650,14 @@ public class EditModeLegacy extends Activity {
 			str = str.substring(0, 2);
 			Log.d("", str);
 			double y = 0;
-			for (int i = 0; i < NoteFrequencies.staff_notes.length; i++) {
-				if (NoteFrequencies.staff_notes[i].equals(str)) {
+			String[] staff_note_rep = null;
+			if (song.getClef() == 0) {
+				staff_note_rep = NoteFrequencies.bass_staff_notes;
+			} else {
+				staff_note_rep = NoteFrequencies.staff_notes;
+			}
+			for (int i = 0; i < staff_note_rep.length; i++) {
+				if (staff_note_rep[i].equals(str)) {
 					y = NoteFrequencies.staff_lines[i] - 30;
 				}
 			}
@@ -1265,11 +1268,19 @@ public class EditModeLegacy extends Activity {
 					dynamic = "ff";
 				}
 			}
-			name = NoteFrequencies.staff_notes[0] + annotation;
+			String[] staff_note_rep;
+			if (song.getClef() == 0) {
+				staff_note_rep = NoteFrequencies.bass_staff_notes;
+				Log.d("", "Bass rep");
+			} else {
+				staff_note_rep = NoteFrequencies.staff_notes;
+			}
+			Log.d("","staff_note_rep[0]: "+staff_note_rep[0]);
+			name = staff_note_rep[0] + annotation;
 			for (int j = 0; j < NoteFrequencies.staff_lines.length; j++) {
 				if (NoteFrequencies.staff_lines[j] > ((ImageView) notes[i])
 						.getTop() + 25) {
-					name = NoteFrequencies.staff_notes[j] + annotation;
+					name = staff_note_rep[j] + annotation;
 				}
 			}
 			Log.d("", "Note name: " + name);

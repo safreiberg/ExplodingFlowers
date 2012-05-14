@@ -175,8 +175,14 @@ public class PlaybackModeLegacy extends Activity {
 			str = str.substring(0, 2);
 			Log.d("", str);
 			double y = 0;
-			for (int i = 0; i < NoteFrequencies.staff_notes.length; i++) {
-				if (NoteFrequencies.staff_notes[i].equals(str)) {
+			String[] staff_note_rep = null;
+			if (song.getClef() == 0) {
+				staff_note_rep = NoteFrequencies.bass_staff_notes;
+			} else {
+				staff_note_rep = NoteFrequencies.staff_notes;
+			}
+			for (int i = 0; i < staff_note_rep.length; i++) {
+				if (staff_note_rep[i].equals(str)) {
 					y = NoteFrequencies.staff_lines[i] - 30;
 				}
 			}
