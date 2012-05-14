@@ -292,6 +292,9 @@ public class PlaybackModeLegacy extends Activity {
 				group.removeView(img);
 				group.addView(img);
 			}
+			if (img != null) {
+				this.annotations[g] = img;
+			}
 			img = new ImageView(getApplicationContext());
 			String dynString = n.getDynamic();
 			if (dynString != null) {
@@ -320,7 +323,7 @@ public class PlaybackModeLegacy extends Activity {
 				group.addView(img);
 			}
 			if (img != null) {
-				this.annotations[g] = img;
+				this.dynamics[g] = img;
 			}
 			g++;
 		}
