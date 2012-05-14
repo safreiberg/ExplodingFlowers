@@ -1,36 +1,21 @@
 package com.MusicalSketches;
 
 import java.util.Date;
-import java.util.Calendar;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.DialogFragment;
-import android.app.ListActivity;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ImageView;
 import android.widget.Button;
-import android.view.*;
-import com.MusicalSketches.datarep.*;
+import android.widget.EditText;
+import android.widget.Spinner;
+
+import com.MusicalSketches.datarep.Song;
 
 public class SongSelect extends Activity {
 	@Override
@@ -107,10 +92,6 @@ public class SongSelect extends Activity {
 					song.setMeter(Integer.valueOf(str.substring(0, 1)),
 							Integer.valueOf(str.substring(2, 3)));
 				}
-
-				// Toast for testing attribute setting
-				Toast.makeText(getApplicationContext(),
-						tempo.getText().toString(), 2).show();
 				Intent next = new Intent(SongSelect.this, EditModeLegacy.class);
 				next.putExtra("song object", song);
 				startActivityForResult(next, 0);

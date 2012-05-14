@@ -16,5 +16,5 @@
         android:title="Close"/>
     <item
         android:id="@+id/edit_play"
-        android:title="Play"/>
+        android:title="Playback"/>
 </menu>

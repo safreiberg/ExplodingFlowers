@@ -20,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.MusicalSketches.EditModeLegacy.states;
 import com.MusicalSketches.datarep.Note;
@@ -371,12 +370,10 @@ public class PlaybackModeLegacy extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.playback_close:
-			Toast.makeText(this, "Bye!", Toast.LENGTH_SHORT).show();
 			audioTrack.stop();
 			finish();
 			break;
 		case R.id.playback_edit:
-			Toast.makeText(this, "As you wish...", Toast.LENGTH_SHORT).show();
 			audioTrack.stop();
 			Intent intent = new Intent(PlaybackModeLegacy.this,
 					EditModeLegacy.class);

@@ -29,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.MusicalSketches.SongSelect.MyOnItemSelectedListener;
 import com.MusicalSketches.datarep.KeySignatures;
@@ -644,8 +643,6 @@ public class EditModeLegacy extends Activity {
 		}
 		Log.d("", "generating screen: " + number);
 		Log.d("", "song size: " + this.song.size());
-		Toast.makeText(getApplicationContext(), "Song length: " + song.size(),
-				Toast.LENGTH_SHORT).show();
 		this.screen_number = number;
 		if (this.screen_number > 0) {
 			this.left_button.setVisibility(View.VISIBLE);
@@ -1121,13 +1118,11 @@ public class EditModeLegacy extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.edit_close:
-			Toast.makeText(this, "Closing...", Toast.LENGTH_SHORT).show();
 			savePage();
 			finish();
 			break;
 		case R.id.edit_play:
 			savePage();
-			Toast.makeText(this, "Play...", Toast.LENGTH_SHORT).show();
 			Intent next = new Intent(EditModeLegacy.this,
 					PlaybackModeLegacy.class);
 			next.putExtra("song object", song);
@@ -1135,11 +1130,9 @@ public class EditModeLegacy extends Activity {
 			startActivity(next);
 			break;
 		case R.id.edit_save:
-			Toast.makeText(this, "Saving...", Toast.LENGTH_SHORT).show();
 			savePage();
 			break;
 		case R.id.edit_delete:
-			Toast.makeText(this, "Deleting...", Toast.LENGTH_SHORT).show();
 			createAreYouSure();
 			break;
 		}

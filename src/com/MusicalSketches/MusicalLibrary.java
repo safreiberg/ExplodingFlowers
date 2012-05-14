@@ -1,6 +1,7 @@
 package com.MusicalSketches;
 
 import java.io.FileInputStream;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.MusicalSketches.datarep.Library;
 import com.MusicalSketches.datarep.Note;
@@ -38,7 +38,7 @@ public class MusicalLibrary extends Activity {
 	private Library library;
 	private ListView list1;
 	private TextView text;
-	
+
 	public MusicalLibrary() {
 		this.library = new Library();
 	}
@@ -47,14 +47,14 @@ public class MusicalLibrary extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.userlibrary);
-				
+
 		text = (TextView) findViewById(R.id.textView1);
 		text.setText("User Library");
 		list1 = (ListView) findViewById(R.id.listView1);
 
 		regenerateStoredLibrary();
 		if (library.getSongs().size() == 0) {
-			text.setText("User Library (empty)");	
+			text.setText("User Library (empty)");
 		}
 		updateView();
 
@@ -64,13 +64,14 @@ public class MusicalLibrary extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// When clicked, show a toast with the TextView text
-				Toast.makeText(getApplicationContext(),
-						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-				Intent next = new Intent(MusicalLibrary.this, EditModeLegacy.class);
+				Intent next = new Intent(MusicalLibrary.this,
+						EditModeLegacy.class);
 				next.putExtra("song object",
 						library.getSong("" + ((TextView) view).getText()));
 				Song s = library.getSong("" + ((TextView) view).getText());
-				Log.d("", "Opening song: " + s.getTitle() + ", length: " + s.size());
+				Log.d("",
+						"Opening song: " + s.getTitle() + ", length: "
+								+ s.size());
 				startActivityForResult(next, 0);
 			}
 		});
@@ -100,7 +101,7 @@ public class MusicalLibrary extends Activity {
 			// delete
 			if (data == null) {
 				return;
-			} 
+			}
 			Song s = (Song) data.getSerializableExtra("song object");
 			library.remove(s.getTitle());
 			updateView();
@@ -142,10 +143,8 @@ public class MusicalLibrary extends Activity {
 			createAreYouSure();
 			break;
 		case SORT:
-			Toast.makeText(this, "Sorting...", Toast.LENGTH_SHORT).show();
 			Collections.sort(songs);
-			Log.d("","songs: " + songs.size());
-			//updateView();
+			Log.d("", "songs: " + songs.size());
 			arrayAdapter = new ArrayAdapter<String>(this,
 					android.R.layout.simple_list_item_1, songs);
 			list1.setAdapter(arrayAdapter);
@@ -156,7 +155,7 @@ public class MusicalLibrary extends Activity {
 		}
 		return false;
 	}
-	
+
 	public void createAreYouSure() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Are you sure??")
@@ -217,10 +216,15 @@ public class MusicalLibrary extends Activity {
 				android.R.layout.simple_list_item_1, songs);
 		list1.setAdapter(arrayAdapter);
 		if (library.getSongs().size() == 0) {
-			text.setText("User Library (empty)");	
+			text.setText("User Library (empty)");
 		} else {
 			text.setText("User Library");
 		}
+		Collections.sort(songs);
+		Log.d("", "songs: " + songs.size());
+		arrayAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, songs);
+		list1.setAdapter(arrayAdapter);
 	}
 
 	public void persistStorage() {
@@ -245,17 +249,17 @@ public class MusicalLibrary extends Activity {
 			in.close();
 			fileIn.close();
 		} catch (Exception i) {
-			//i.printStackTrace();
+			// i.printStackTrace();
 			Log.wtf("", "error reading file");
 		}
 		if (library == null) {
 			library = new Library();
 		}
 	}
-	
+
 	@Override
-    protected void onDestroy() {
-        super.onDestroy();
-        persistStorage();
-    }
+	protected void onDestroy() {
+		super.onDestroy();
+		persistStorage();
+	}
 }
