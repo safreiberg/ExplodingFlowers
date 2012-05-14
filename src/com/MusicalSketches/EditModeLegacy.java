@@ -103,6 +103,9 @@ public class EditModeLegacy extends Activity {
 		class left_arrow_button_click implements OnClickListener {
 			@Override
 			public void onClick(View v) {
+				if (!inNotesMode) {
+					rests_button.performClick();
+				}
 				generateScreen(screen_number - 1, false);
 			}
 		}
@@ -110,6 +113,9 @@ public class EditModeLegacy extends Activity {
 		class right_arrow_button_click implements OnClickListener {
 			@Override
 			public void onClick(View v) {
+				if (!inNotesMode) {
+					rests_button.performClick();
+				}
 				generateScreen(screen_number + 1, false);
 			}
 		}
@@ -471,7 +477,18 @@ public class EditModeLegacy extends Activity {
 						if (!inNotesMode) {
 							// all the rests should go at the same height, which
 							// is staff_lines[2]
-							staff_line = 3;
+							staff_line = 4;
+						}
+						if (staff_line == 0
+								|| staff_line == NoteFrequencies.staff_lines.length - 1) {
+							// need a new picture.
+							if (type_selected == placement_objects.eighth_note) {
+								((ImageView)selected_view).setImageResource(R.drawable.eigth_note_transparent_low);
+							} else if (type_selected == placement_objects.quarter_note) {
+								((ImageView)selected_view).setImageResource(R.drawable.quarter_note_transparent_low);
+							} else if (type_selected == placement_objects.half_note) {
+								((ImageView)selected_view).setImageResource(R.drawable.half_note_transparent_low);
+							} 
 						}
 						params.topMargin = NoteFrequencies.staff_lines[staff_line] - 30;
 						params.leftMargin = 30 + (i + 1) * 60;
@@ -1032,8 +1049,7 @@ public class EditModeLegacy extends Activity {
 			}
 			if (dynos[i] != null) {
 				placement_objects tag = (placement_objects) (dynos[i]).getTag();
-				Log.d("", "there should be a dynamic here: "
-						+ tag);
+				Log.d("", "there should be a dynamic here: " + tag);
 				if (tag == placement_objects.pp) {
 					dynamic = "pp";
 				} else if (tag == placement_objects.p) {

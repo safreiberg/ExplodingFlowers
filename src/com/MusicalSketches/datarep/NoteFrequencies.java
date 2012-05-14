@@ -10,11 +10,11 @@ public class NoteFrequencies {
 
 	public static Map<String, Double> frequencyMap = new HashMap<String, Double>();
 	public static Map<Double, String> freqToString = new HashMap<Double, String>();
-	public static int[] staff_lines = new int[] { 227, 218, 208, 199, 189, 180,
-			170, 160, 150 }; // from first line to fifth line
+	public static int[] staff_lines = new int[] { 247,237, 227, 218, 208, 199, 189, 180,
+			170, 160, 150, 140, 131}; // from first line to fifth line
 	//we should somehow make this a switch statement so we can switch between bass and treble
-	public static String[] staff_notes = new String[] { "e4", "f4", "g4", "a4",
-			"b4", "c5", "d5", "e5", "f5" };
+	public static String[] staff_notes = new String[] { "c4","d4", "e4", "f4", "g4", "a4",
+			"b4", "c5", "d5", "e5", "f5", "g5", "a5" };
 	//bass representation
 	//public static String[] staff_notes = new String[] { "g2", "a2", "b2", "c3", "d3", "e3", "f3", "g3", "a3"};
 
