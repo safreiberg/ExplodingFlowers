@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.MusicalSketches.datarep.KeySignatures;
 import com.MusicalSketches.datarep.Note;
 import com.MusicalSketches.datarep.NoteFrequencies;
 import com.MusicalSketches.datarep.Song;
@@ -50,6 +51,7 @@ public class EditModeLegacy extends Activity {
 	TextView meter_disp;
 	ImageButton trash_button;
 	ImageView clef_image;
+	ImageView key_image;
 	ImageView gray_cover;
 	ImageView music_score;
 	ImageButton right_button;
@@ -91,6 +93,7 @@ public class EditModeLegacy extends Activity {
 		music_score = (ImageView) findViewById(R.id.music_score);
 		trash_button = (ImageButton) findViewById(R.id.trash_can);
 		clef_image = (ImageView) findViewById(R.id.clef_image);
+		key_image = (ImageView) findViewById(R.id.keysig_image);
 		right_button = (ImageButton) findViewById(R.id.right_arrow);
 		left_button = (ImageButton) findViewById(R.id.left_arrow);
 		gray_cover = (ImageView) findViewById(R.id.gray_cover);
@@ -331,6 +334,11 @@ public class EditModeLegacy extends Activity {
 		clef_image.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				createClefDialog();
+			}
+		});
+		key_image.setOnClickListener(new View.OnClickListener(){
+			public void onClick(View v){
+				createKeyDialog();
 			}
 		});
 
@@ -886,9 +894,85 @@ public class EditModeLegacy extends Activity {
 			return;
 		}
 		int clef = s.getClef();
-		if (clef == 1) {
+		String[] keyList = KeySignatures.keyMap.get(s.getKey());
+		if (clef == 1) { //treble clef
 			((ImageView) findViewById(R.id.clef_image))
 					.setImageResource(R.drawable.treble_clef);
+			
+			if (keyList[0] == "Sharp"){
+				if (keyList.length == 2){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1sharps);
+				} else if (keyList.length == 3){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2sharps);
+				}else if (keyList.length == 4){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3sharps);
+				}else if (keyList.length == 5){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4sharps);
+				}else if (keyList.length == 6){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5sharps);
+				}else if (keyList.length == 7){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6sharps);
+				}else if (keyList.length == 8){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7sharps);
+				}
+				
+			} else if (keyList[0] == "Flat"){
+				if (keyList.length == 2){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1flats);
+				} else if (keyList.length == 3){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2flats);
+				}else if (keyList.length == 4){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3flats);
+				}else if (keyList.length == 5){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4flats);
+				}else if (keyList.length == 6){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5flats);
+				}else if (keyList.length == 7){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6flats);
+				}else if (keyList.length == 8){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7flats);
+				}
+			} else{ //C or A minor
+				((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+			}
+			
+		} else {//bass clef
+			if (keyList[0] == "Sharp"){
+				if (keyList.length == 2){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1sharps);
+				} else if (keyList.length == 3){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2sharps);
+				}else if (keyList.length == 4){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3sharps);
+				}else if (keyList.length == 5){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4sharps);
+				}else if (keyList.length == 6){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5sharps);
+				}else if (keyList.length == 7){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6sharps);
+				}else if (keyList.length == 8){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7sharps);
+				}
+				
+			} else if (keyList[0] == "Flat"){
+				if (keyList.length == 2){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1flats);
+				} else if (keyList.length == 3){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2flats);
+				}else if (keyList.length == 4){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3flats);
+				}else if (keyList.length == 5){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4flats);
+				}else if (keyList.length == 6){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5flats);
+				}else if (keyList.length == 7){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6flats);
+				}else if (keyList.length == 8){
+					((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7flats);
+				}
+			} else{ //C or A minor
+				((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+			}
 		}
 		meter_disp.setText("" + s.getMeterTop() + "\n" + s.getMeterBottom());
 	}
@@ -1008,6 +1092,101 @@ public class EditModeLegacy extends Activity {
 				} else {
 					((ImageView) findViewById(R.id.clef_image))
 							.setImageResource(R.drawable.treble_clef);
+				}
+			}
+		});
+
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	public void createKeyDialog(){
+		final CharSequence[] keys = { "C", "G", "D", "A", "E", "B", "F#", "Db",
+				"Ab", "Eb", "Bb", "F", "A minor", "E minor", "B minor",
+				"F# minor", "Db minor", "Ab minor", "Eb minor", "Bb minor",
+				"F minor", "C minor", "G minor", "D minor" };
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Choose New Key");
+		builder.setItems(keys, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				song.setKey(item);
+				int c = song.getClef();
+				String[] keyList = KeySignatures.keyMap.get(song.getKey());
+				if (c == 1) { //treble clef
+					
+					if (keyList[0] == "Sharp"){
+						if (keyList.length == 2){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1sharps);
+						} else if (keyList.length == 3){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2sharps);
+						}else if (keyList.length == 4){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3sharps);
+						}else if (keyList.length == 5){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4sharps);
+						}else if (keyList.length == 6){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5sharps);
+						}else if (keyList.length == 7){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6sharps);
+						}else if (keyList.length == 8){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7sharps);
+						}
+						
+					} else if (keyList[0] == "Flat"){
+						if (keyList.length == 2){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t1flats);
+						} else if (keyList.length == 3){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t2flats);
+						}else if (keyList.length == 4){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t3flats);
+						}else if (keyList.length == 5){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t4flats);
+						}else if (keyList.length == 6){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t5flats);
+						}else if (keyList.length == 7){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t6flats);
+						}else if (keyList.length == 8){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.t7flats);
+						}
+					} else{ //C or A minor
+						((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+					}
+					
+				} else {//bass clef
+					if (keyList[0] == "Sharp"){
+						if (keyList.length == 2){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1sharps);
+						} else if (keyList.length == 3){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2sharps);
+						}else if (keyList.length == 4){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3sharps);
+						}else if (keyList.length == 5){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4sharps);
+						}else if (keyList.length == 6){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5sharps);
+						}else if (keyList.length == 7){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6sharps);
+						}else if (keyList.length == 8){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7sharps);
+						}
+						
+					} else if (keyList[0] == "Flat"){
+						if (keyList.length == 2){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b1flats);
+						} else if (keyList.length == 3){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b2flats);
+						}else if (keyList.length == 4){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b3flats);
+						}else if (keyList.length == 5){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b4flats);
+						}else if (keyList.length == 6){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b5flats);
+						}else if (keyList.length == 7){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b6flats);
+						}else if (keyList.length == 8){
+							((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.b7flats);
+						}
+					} else{ //C or A minor
+						((ImageView) findViewById(R.id.keysig_image)).setImageResource(R.drawable.none);
+					}
 				}
 			}
 		});

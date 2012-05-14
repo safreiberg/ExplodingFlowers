@@ -79,6 +79,10 @@ public class SongSelect extends Activity {
 					// treble is 1.
 					song.setClef(1);
 				}
+				
+				//Set Key
+				Spinner spinner = (Spinner) findViewById(R.id.spinner);
+				song.setKey(spinner.getSelectedItemPosition());
 
 				// Set Tempo
 				EditText tempo = (EditText) findViewById(R.id.editText2);
