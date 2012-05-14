@@ -156,9 +156,9 @@ public class EditModeLegacy extends Activity {
 				changeTempo();
 			}
 		});
-		
+
 		title_text.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				changeTitle();
@@ -421,6 +421,12 @@ public class EditModeLegacy extends Activity {
 								if (annotations[i] != null) {
 									group.removeView(annotations[i]);
 								}
+								if (notes[i].getTag() == placement_objects.eighth_rest
+										|| notes[i].getTag() == placement_objects.half_rest
+										|| notes[i].getTag() == placement_objects.quarter_rest) {
+									unclickAll();
+									return true;
+								}
 								annotations[i] = selected_view;
 								selected_view.setLayoutParams(params);
 								group.removeView(selected_view);
@@ -487,8 +493,7 @@ public class EditModeLegacy extends Activity {
 							// thus we add it...
 							int loc = (int) ((event_x - 30) / 60 - 1);
 							params.topMargin = 264;
-							params.leftMargin = offset_left + 10 + (loc + 1)
-									* 60;
+							params.leftMargin = offset_left + 10 + (loc) * 60;
 							Log.d("",
 									"Placing a dynamic: "
 											+ selected_view.getTag());
@@ -525,7 +530,7 @@ public class EditModeLegacy extends Activity {
 						if (!inNotesMode) {
 							// all the rests should go at the same height, which
 							// is staff_lines[2]
-							staff_line = 4;
+							staff_line = 5;
 						}
 						if (staff_line == 0
 								|| staff_line == NoteFrequencies.staff_lines.length - 1) {
@@ -613,6 +618,7 @@ public class EditModeLegacy extends Activity {
 							type_selected = (placement_objects) selected_view
 									.getTag();
 							state = states.selected_to_place;
+							placingDynamic = true;
 							return true;
 						}
 					}
@@ -632,6 +638,7 @@ public class EditModeLegacy extends Activity {
 
 		music_score.setOnTouchListener(new score_touch());
 		generateScreen(0, true);
+		setToNotesMode();
 	}
 
 	private void generateScreen(int number, boolean opening) {
@@ -648,10 +655,12 @@ public class EditModeLegacy extends Activity {
 			this.left_button.setVisibility(View.VISIBLE);
 			this.clef_image.setVisibility(View.INVISIBLE);
 			this.meter_disp.setVisibility(View.INVISIBLE);
+			this.key_image.setVisibility(View.INVISIBLE);
 		} else {
 			this.left_button.setVisibility(View.INVISIBLE);
 			this.clef_image.setVisibility(View.VISIBLE);
 			this.meter_disp.setVisibility(View.VISIBLE);
+			this.key_image.setVisibility(View.VISIBLE);
 		}
 		// show the right button if there are more notes off the page.
 		if (this.song.size() >= (this.screen_number + 1) * MAX_NOTES_ONSCREEN) {
@@ -716,12 +725,14 @@ public class EditModeLegacy extends Activity {
 			}
 			if (l == 0.125) {
 				left_note.performClick();
-				if (!line_through) {
-					((ImageView) selected_view)
-							.setImageResource(R.drawable.eigth_note_transparent);
-				} else {
-					((ImageView) selected_view)
-							.setImageResource(R.drawable.eigth_note_transparent_low);
+				if (inNotesMode) {
+					if (!line_through) {
+						((ImageView) selected_view)
+								.setImageResource(R.drawable.eigth_note_transparent);
+					} else {
+						((ImageView) selected_view)
+								.setImageResource(R.drawable.eigth_note_transparent_low);
+					}
 				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -738,12 +749,14 @@ public class EditModeLegacy extends Activity {
 				unclickAll();
 			} else if (l == 0.25) {
 				middle_note.performClick();
-				if (!line_through) {
-					((ImageView) selected_view)
-							.setImageResource(R.drawable.quarter_note_transparent);
-				} else {
-					((ImageView) selected_view)
-							.setImageResource(R.drawable.quarter_note_transparent_low);
+				if (inNotesMode) {
+					if (!line_through) {
+						((ImageView) selected_view)
+								.setImageResource(R.drawable.quarter_note_transparent);
+					} else {
+						((ImageView) selected_view)
+								.setImageResource(R.drawable.quarter_note_transparent_low);
+					}
 				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -760,12 +773,14 @@ public class EditModeLegacy extends Activity {
 				unclickAll();
 			} else if (l == 0.5) {
 				right_note.performClick();
-				if (!line_through) {
-					((ImageView) selected_view)
-							.setImageResource(R.drawable.half_note_transparent);
-				} else {
-					((ImageView) selected_view)
-							.setImageResource(R.drawable.half_note_transparent_low);
+				if (inNotesMode) {
+					if (!line_through) {
+						((ImageView) selected_view)
+								.setImageResource(R.drawable.half_note_transparent);
+					} else {
+						((ImageView) selected_view)
+								.setImageResource(R.drawable.half_note_transparent_low);
+					}
 				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -864,7 +879,7 @@ public class EditModeLegacy extends Activity {
 				unclickAll();
 			}
 			g++;
-			if (n.isRest()) {
+			if (inNotesMode == false) {
 				inNotesMode = true;
 			}
 		}
@@ -1413,6 +1428,7 @@ public class EditModeLegacy extends Activity {
 				length = 0.5;
 			}
 			Note n = new Note(pitch, length, name);
+			Log.d("", "tag: " + tag);
 			if (tag == placement_objects.eighth_rest
 					|| tag == placement_objects.half_rest
 					|| tag == placement_objects.quarter_rest) {
@@ -1506,7 +1522,7 @@ public class EditModeLegacy extends Activity {
 					song.setTempo(Integer.valueOf(value));
 					tempo_text.setText("" + song.getTempo() + " " + "BPM");
 				} catch (Exception e) {
-					
+
 				}
 			}
 		});
@@ -1518,7 +1534,7 @@ public class EditModeLegacy extends Activity {
 				});
 		alert.show();
 	}
-	
+
 	private void changeTitle() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Change Title");
@@ -1532,7 +1548,7 @@ public class EditModeLegacy extends Activity {
 					song.setTitle(value);
 					title_text.setText(value);
 				} catch (Exception e) {
-					
+
 				}
 			}
 		});
@@ -1545,5 +1561,13 @@ public class EditModeLegacy extends Activity {
 				});
 
 		alert.show();
+	}
+
+	private void setToNotesMode() {
+		inNotesMode = true;
+		left_note.setImageResource(R.drawable.eigth_note_transparent);
+		middle_note.setImageResource(R.drawable.quarter_note_transparent);
+		right_note.setImageResource(R.drawable.half_note_transparent);
+		rests_button.setText("Rests");
 	}
 }

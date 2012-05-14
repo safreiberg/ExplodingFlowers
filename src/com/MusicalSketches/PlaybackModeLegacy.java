@@ -1,4 +1,4 @@
-package com.MusicalSketches;
+ package com.MusicalSketches;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -468,7 +468,7 @@ public class PlaybackModeLegacy extends Activity {
 								RelativeLayout.LayoutParams.WRAP_CONTENT,
 								RelativeLayout.LayoutParams.WRAP_CONTENT);
 						params.topMargin = (int) 50;
-						params.leftMargin = 80;
+						params.leftMargin = 120;
 						arrow.setLayoutParams(params);
 						group.addView(arrow);
 						arrow.setVisibility(0);
