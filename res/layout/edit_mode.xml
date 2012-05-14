@@ -38,6 +38,7 @@
         android:layout_toRightOf="@id/right_note"
         android:contentDescription="@string/more_notes_icon"
         android:scaleType="center"
+        android:visibility="invisible"
         android:src="@drawable/down_carat" />
 
     <Button
@@ -80,6 +81,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
+        android:visibility="invisible"
         android:layout_toRightOf="@id/dynamics_button"
         android:contentDescription="@string/slurs_button"
         android:src="@drawable/slur_transparent" />

@@ -183,7 +183,7 @@ public class MusicalLibrary extends Activity {
 
 	public void createHelpDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("I have no help for you here.")
+		builder.setMessage("Click on a song you've made, or create a new one with the top button!")
 				.setCancelable(true)
 				.setPositiveButton("Sorry!",
 						new DialogInterface.OnClickListener() {

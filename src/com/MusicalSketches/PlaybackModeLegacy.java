@@ -66,7 +66,7 @@ public class PlaybackModeLegacy extends Activity {
 		meter_disp = (TextView) findViewById(R.id.meter_text);
 
 		addClefMeterKey(song);
-		genTone();
+		genTone(0);
 
 		play_pause = (ImageButton) findViewById(R.id.play_pause_button);
 		rewind_button = (ImageButton) findViewById(R.id.rewind_button);
@@ -483,16 +483,26 @@ public class PlaybackModeLegacy extends Activity {
 		}, time + 1000);
 	}
 
-	void genTone() {
+	void genTone(int start) {
 		double duration = 0; // seconds
+		int lcv = -1;
 		for (Note n : song.getNotes().getNotes()) {
+			lcv++;
+			if (lcv < start) {
+				continue;
+			}
 			duration += n.getLength(); // TODO tempo!!
 		}
 		numSamples = (int) (duration * sampleRate);
 		double[] sample = new double[numSamples];
 		generatedSnd = new byte[2 * numSamples];
 		int j = 0;
+		lcv = -1;
 		for (Note n : song.getNotes().getNotes()) {
+			lcv++;
+			if (lcv < start) {
+				continue;
+			}
 			Log.d("", "Pitch: " + n.getPitch());
 			double freqOfTone = n.getPitch(); // hz
 			if (n.isRest()) {
