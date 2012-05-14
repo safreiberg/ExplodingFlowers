@@ -135,6 +135,83 @@ public class Song implements Serializable {
 		this.key = string;
 	}
 
+	public void setKey(int i) {
+		switch (i) {
+		case 0:
+			this.key = "C";
+			break;
+		case 1:
+			this.key = "G";
+			break;
+		case 2:
+			this.key = "D";
+			break;
+		case 3:
+			this.key = "A";
+			break;
+		case 4:
+			this.key = "E";
+			break;
+		case 5:
+			this.key = "B";
+			break;
+		case 6:
+			this.key = "F#";
+			break;
+		case 7:
+			this.key = "Db";
+			break;
+		case 8:
+			this.key = "Ab";
+			break;
+		case 9:
+			this.key = "Eb";
+			break;
+		case 10:
+			this.key = "Bb";
+			break;
+		case 11:
+			this.key = "F";
+			break;
+		case 12:
+			this.key = "A minor";
+			break;
+		case 13:
+			this.key = "E minor";
+			break;
+		case 14:
+			this.key = "B minor";
+			break;
+		case 15:
+			this.key = "F# minor";
+			break;
+		case 16:
+			this.key = "Db minor";
+			break;
+		case 17:
+			this.key = "Ab minor";
+			break;
+		case 18:
+			this.key = "Eb minor";
+			break;
+		case 19:
+			this.key = "Bb minor";
+			break;
+		case 20:
+			this.key = "F minor";
+			break;
+		case 21:
+			this.key = "C minor";
+			break;
+		case 22:
+			this.key = "G minor";
+			break;
+		case 23:
+			this.key = "D minor";
+			break;
+		}
+	}
+
 	public void updateNotePitch(int index, double pitch) {
 		this.notes.updateNotePitch(index, pitch);
 	}
