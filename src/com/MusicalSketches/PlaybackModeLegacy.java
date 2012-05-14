@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -44,6 +45,9 @@ public class PlaybackModeLegacy extends Activity {
 	TextView meter_disp;
 	ImageView clef_image;
 	Timer arrowTimer;
+	ImageButton play_pause;
+	ImageButton rewind_button;
+	ImageButton forward_button;
 	public static final int MAX_NOTES_ONSCREEN = 10;
 	int screen_number = 0;
 	View[] notes = new View[MAX_NOTES_ONSCREEN];
@@ -65,9 +69,9 @@ public class PlaybackModeLegacy extends Activity {
 		addClefMeterKey(song);
 		genTone();
 
-		ImageButton play_pause = (ImageButton) findViewById(R.id.play_pause_button);
-		ImageButton rewind_button = (ImageButton) findViewById(R.id.rewind_button);
-		ImageButton forward_button = (ImageButton) findViewById(R.id.forward_button);
+		play_pause = (ImageButton) findViewById(R.id.play_pause_button);
+		rewind_button = (ImageButton) findViewById(R.id.rewind_button);
+		forward_button = (ImageButton) findViewById(R.id.forward_button);
 		b = (ImageButton) findViewById(R.id.play_pause_button);
 		group = (ViewGroup) findViewById(R.id.edit_layout);
 
@@ -179,7 +183,11 @@ public class PlaybackModeLegacy extends Activity {
 
 			ImageView img = new ImageView(getApplicationContext());
 			if (l == 0.125) {
-				img.setImageResource(R.drawable.eigth_note_transparent);
+				if (!n.isRest()) {
+					img.setImageResource(R.drawable.eigth_note_transparent);
+				} else {
+					img.setImageResource(R.drawable.eighth_rest);
+				}
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
 				img.setMaxWidth(50);
@@ -194,7 +202,11 @@ public class PlaybackModeLegacy extends Activity {
 				group.removeView(img);
 				group.addView(img);
 			} else if (l == 0.25) {
-				img.setImageResource(R.drawable.quarter_note_transparent);
+				if (!n.isRest()) {
+					img.setImageResource(R.drawable.quarter_note_transparent);
+				} else {
+					img.setImageResource(R.drawable.quarter_rest);
+				}
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
 				img.setMaxWidth(50);
@@ -209,7 +221,11 @@ public class PlaybackModeLegacy extends Activity {
 				group.removeView(img);
 				group.addView(img);
 			} else if (l == 0.5) {
-				img.setImageResource(R.drawable.half_note_transparent);
+				if (!n.isRest()) {
+					img.setImageResource(R.drawable.half_note_transparent);
+				} else {
+					img.setImageResource(R.drawable.half_rest);
+				}
 				img.setAdjustViewBounds(true);
 				img.setMaxHeight(65);
 				img.setMaxWidth(50);
@@ -294,6 +310,10 @@ public class PlaybackModeLegacy extends Activity {
 		inflater.inflate(R.menu.playback_menu, menu);
 		return true;
 	}
+	
+	@Override
+	public void onBackPressed() {
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -306,7 +326,10 @@ public class PlaybackModeLegacy extends Activity {
 		case R.id.playback_edit:
 			Toast.makeText(this, "As you wish...", Toast.LENGTH_SHORT).show();
 			audioTrack.stop();
-			finish();
+			Intent intent = new Intent(PlaybackModeLegacy.this, EditModeLegacy.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			intent.putExtra("song object", song);
+			startActivity(intent);
 			break;
 		}
 		return false;
@@ -384,6 +407,29 @@ public class PlaybackModeLegacy extends Activity {
 				}
 			}, time);
 		}
+		arrowTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				class DoneClicker implements Runnable {
+					@Override
+					public void run() {
+						group.removeView(arrow);
+						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+								RelativeLayout.LayoutParams.WRAP_CONTENT,
+								RelativeLayout.LayoutParams.WRAP_CONTENT);
+						params.topMargin = (int) 50;
+						params.leftMargin = 80;
+						arrow.setLayoutParams(params);
+						group.addView(arrow);
+						arrow.setVisibility(0);
+						play_pause.performClick();
+						rewind_button.performClick();
+					}
+
+				}
+				runOnUiThread(new DoneClicker());
+			}
+		}, time + 1000);
 	}
 
 	void genTone() {
@@ -398,6 +444,9 @@ public class PlaybackModeLegacy extends Activity {
 		for (Note n : song.getNotes().getNotes()) {
 			Log.d("", "Pitch: " + n.getPitch());
 			double freqOfTone = n.getPitch(); // hz
+			if (n.isRest()) {
+				freqOfTone = 1;
+			}
 			int numThisNote = (int) (n.getLength() * sampleRate);
 			Log.d("", "J is: " + j);
 			// fill out the array

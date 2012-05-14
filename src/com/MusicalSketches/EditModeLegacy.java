@@ -817,6 +817,7 @@ public class EditModeLegacy extends Activity {
 			Intent next = new Intent(EditModeLegacy.this,
 					PlaybackModeLegacy.class);
 			next.putExtra("song object", song);
+			next.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(next);
 			break;
 		case R.id.edit_save:
