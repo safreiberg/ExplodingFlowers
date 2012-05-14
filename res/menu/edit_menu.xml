@@ -6,8 +6,7 @@
 
     <item
         android:id="@+id/edit_delete"
-        android:title="Delete"
-        />
+        android:title="Delete"/>
     <item
         android:id="@+id/edit_save"
         android:title="Save"/>
@@ -17,4 +16,5 @@
     <item
         android:id="@+id/edit_play"
         android:title="Playback"/>
+
 </menu>

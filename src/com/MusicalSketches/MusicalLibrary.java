@@ -16,7 +16,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -57,7 +60,7 @@ public class MusicalLibrary extends Activity {
 			text.setText("User Library (empty)");
 		}
 		updateView();
-
+		registerForContextMenu(list1);
 		list1.setTextFilterEnabled(true);
 
 		list1.setOnItemClickListener(new OnItemClickListener() {
@@ -225,6 +228,7 @@ public class MusicalLibrary extends Activity {
 		arrayAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, songs);
 		list1.setAdapter(arrayAdapter);
+		persistStorage();
 	}
 
 	public void persistStorage() {
@@ -261,5 +265,22 @@ public class MusicalLibrary extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		persistStorage();
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+	                                ContextMenuInfo menuInfo) {
+	    super.onCreateContextMenu(menu, v, menuInfo);
+	    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+	    menu.setHeaderTitle(songs.get(info.position));
+	    Song s = this.library.getSong(songs.get(info.position));
+	    if (s.getClef()==0) {
+	    	menu.add(Menu.NONE, 0, Menu.NONE, "Clef: Bass");
+	    } else {
+	    	menu.add(Menu.NONE, 0, Menu.NONE, "Clef: Treble");
+	    }
+		menu.add(Menu.NONE, 1, Menu.NONE, "Meter: " + s.getMeterTop() + "/" + s.getMeterBottom());
+		menu.add(Menu.NONE, 2, Menu.NONE, "Tempo: " + s.getTempo());
+		menu.add(Menu.NONE, 2, Menu.NONE, "Length: " + s.size() + " (notes)");
 	}
 }
