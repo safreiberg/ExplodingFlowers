@@ -57,7 +57,7 @@ public class NoteFrequencies {
 		frequencyMap.put("a3sharp", 233.1);
 		frequencyMap.put("b3flat", 233.1);
 		frequencyMap.put("b3", 246.9);
-		frequencyMap.put("b3sharp", 261.6);
+		//frequencyMap.put("b3sharp", 261.6);
 		//
 		frequencyMap.put("c4flat", 246.9);
 		frequencyMap.put("c4", 261.6);
@@ -93,6 +93,12 @@ public class NoteFrequencies {
 		frequencyMap.put("f5flat", 659.3);
 		frequencyMap.put("f5", 698.5);
 		frequencyMap.put("f5sharp", 740.0);
+		frequencyMap.put("g5flat", 740.0);
+		frequencyMap.put("g5", 784.0);
+		frequencyMap.put("g5sharp", 830.6);
+		frequencyMap.put("a5flat", 830.6);
+		frequencyMap.put("a5", 880.0);
+		frequencyMap.put("a5sharp", 932.3);
 		
 		Set<String> str = frequencyMap.keySet();
 		Collection<Double> dubs = frequencyMap.values();

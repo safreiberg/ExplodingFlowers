@@ -453,7 +453,7 @@ public class EditModeLegacy extends Activity {
 						}
 					} else {
 						// need to find a note spot
-						if (event_y > 257 || event_y < 120) {
+						if (event_y > 267 || event_y < 110) {
 							state = states.wait;
 							unclickAll();
 							// outside the score...
@@ -636,6 +636,7 @@ public class EditModeLegacy extends Activity {
 			}
 			Log.d("", "adding note");
 			double freq = n.getPitch();
+			Log.d("","Frequency: " + freq);
 			double l = n.getLength();
 			double x = 20 + (g + 1) * 60;
 			Log.d("", "" + x);
@@ -649,11 +650,22 @@ public class EditModeLegacy extends Activity {
 					y = NoteFrequencies.staff_lines[i] - 30;
 				}
 			}
+			boolean line_through = false;
+			if (y == NoteFrequencies.staff_lines[0] - 30
+					|| y == NoteFrequencies.staff_lines[NoteFrequencies.staff_lines.length - 1] - 30) {
+				line_through = true;
+			}
+			Log.d("","");
 			if (n.isRest()) {
 				inNotesMode = false;
 			}
 			if (l == 0.125) {
 				left_note.performClick();
+				if (!line_through) {
+					((ImageView)selected_view).setImageResource(R.drawable.eigth_note_transparent);
+				} else {
+					((ImageView)selected_view).setImageResource(R.drawable.eigth_note_transparent_low);
+				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -669,6 +681,11 @@ public class EditModeLegacy extends Activity {
 				unclickAll();
 			} else if (l == 0.25) {
 				middle_note.performClick();
+				if (!line_through) {
+					((ImageView)selected_view).setImageResource(R.drawable.quarter_note_transparent);
+				} else {
+					((ImageView)selected_view).setImageResource(R.drawable.quarter_note_transparent_low);
+				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -684,6 +701,11 @@ public class EditModeLegacy extends Activity {
 				unclickAll();
 			} else if (l == 0.5) {
 				right_note.performClick();
+				if (!line_through) {
+					((ImageView)selected_view).setImageResource(R.drawable.half_note_transparent);
+				} else {
+					((ImageView)selected_view).setImageResource(R.drawable.half_note_transparent_low);
+				}
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
 						RelativeLayout.LayoutParams.WRAP_CONTENT,
 						RelativeLayout.LayoutParams.WRAP_CONTENT);

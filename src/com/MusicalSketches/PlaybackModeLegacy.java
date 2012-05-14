@@ -180,11 +180,19 @@ public class PlaybackModeLegacy extends Activity {
 					y = NoteFrequencies.staff_lines[i] - 30;
 				}
 			}
-
+			boolean line_through = false;
+			if (y == NoteFrequencies.staff_lines[0] - 30
+					|| y == NoteFrequencies.staff_lines[NoteFrequencies.staff_lines.length - 1] - 30) {
+				line_through = true;
+			}
 			ImageView img = new ImageView(getApplicationContext());
 			if (l == 0.125) {
 				if (!n.isRest()) {
-					img.setImageResource(R.drawable.eigth_note_transparent);
+					if (!line_through) {
+						img.setImageResource(R.drawable.eigth_note_transparent);
+					} else {
+						img.setImageResource(R.drawable.eigth_note_transparent_low);
+					}
 				} else {
 					img.setImageResource(R.drawable.eighth_rest);
 				}
@@ -203,7 +211,11 @@ public class PlaybackModeLegacy extends Activity {
 				group.addView(img);
 			} else if (l == 0.25) {
 				if (!n.isRest()) {
-					img.setImageResource(R.drawable.quarter_note_transparent);
+					if (!line_through) {
+						img.setImageResource(R.drawable.quarter_note_transparent);
+					} else {
+						img.setImageResource(R.drawable.quarter_note_transparent_low);
+					}
 				} else {
 					img.setImageResource(R.drawable.quarter_rest);
 				}
@@ -222,7 +234,11 @@ public class PlaybackModeLegacy extends Activity {
 				group.addView(img);
 			} else if (l == 0.5) {
 				if (!n.isRest()) {
-					img.setImageResource(R.drawable.half_note_transparent);
+					if (!line_through) {
+						img.setImageResource(R.drawable.half_note_transparent);
+					} else {
+						img.setImageResource(R.drawable.half_note_transparent_low);
+					}
 				} else {
 					img.setImageResource(R.drawable.half_rest);
 				}
@@ -455,6 +471,7 @@ public class PlaybackModeLegacy extends Activity {
 						arrow.setVisibility(0);
 						play_pause.performClick();
 						rewind_button.performClick();
+						generateScreen(0);
 					}
 
 				}
