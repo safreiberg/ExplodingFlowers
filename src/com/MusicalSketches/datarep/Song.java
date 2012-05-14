@@ -112,6 +112,11 @@ public class Song implements Serializable {
 	}
 
 	public void setNote(int index, Note n) {
+		if (n == null) {
+			if (this.notes.size()>index) {
+				this.notes.remove(index);
+			}
+		}
 		if (this.notes.size() <= index) {
 			this.notes.addNote(n);
 		} else {
@@ -120,7 +125,13 @@ public class Song implements Serializable {
 	}
 
 	public int size() {
-		return this.notes.size();
+		int i = 0;
+		for (Note n : this.notes.getNotes()) {
+			if (n!= null) {
+				i++;
+			}
+		}
+		return i;
 	}
 
 	public void setTitle(String t) {

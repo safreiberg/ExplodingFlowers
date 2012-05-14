@@ -453,7 +453,6 @@ public class EditModeLegacy extends Activity {
 						}
 					}
 					// placing a piece.
-					group.removeView(selected_view);
 					// I'm sure these three for loops are important. But I don't
 					// know why, and I'm not gonna mess up a good thing.
 					for (int i = 0; i < notes.length; i++) {
@@ -471,6 +470,7 @@ public class EditModeLegacy extends Activity {
 							dynos[i] = null;
 						}
 					}
+					group.removeView(selected_view);
 					// //////////
 					if (type_selected == placement_objects.flat
 							|| type_selected == placement_objects.natural
@@ -985,10 +985,8 @@ public class EditModeLegacy extends Activity {
 			Log.d("",
 					"note at index: " + i + " is null? "
 							+ Boolean.toString(n == null));
-			if (n != null) {
-				Log.d("", "note at index: " + i + " is " + n.getName());
-				song.setNote(MAX_NOTES_ONSCREEN * this.screen_number + i, n);
-			}
+			// Log.d("", "note at index: " + i + " is " + n.getName());
+			song.setNote(MAX_NOTES_ONSCREEN * this.screen_number + i, n);
 		}
 		// put song into return intent
 		Intent i = new Intent();

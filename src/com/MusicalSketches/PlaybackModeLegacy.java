@@ -1,4 +1,4 @@
- package com.MusicalSketches;
+package com.MusicalSketches;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -407,6 +407,9 @@ public class PlaybackModeLegacy extends Activity {
 		group.addView(arrow);
 		arrow.setVisibility(0);
 		for (Note n : song.getNotes().getNotes()) {
+			if (n == null) {
+				continue;
+			}
 			time += n.getLength() * 1000;
 			g++;
 			if (g == MAX_NOTES_ONSCREEN) {
@@ -491,7 +494,9 @@ public class PlaybackModeLegacy extends Activity {
 			if (lcv < start) {
 				continue;
 			}
-			duration += n.getLength(); // TODO tempo!!
+			if (n != null) {
+				duration += n.getLength(); // TODO tempo!!
+			}
 		}
 		numSamples = (int) (duration * sampleRate);
 		double[] sample = new double[numSamples];
@@ -499,6 +504,9 @@ public class PlaybackModeLegacy extends Activity {
 		int j = 0;
 		lcv = -1;
 		for (Note n : song.getNotes().getNotes()) {
+			if (n == null ) {
+				continue;
+			}
 			lcv++;
 			if (lcv < start) {
 				continue;

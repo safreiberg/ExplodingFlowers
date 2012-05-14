@@ -53,4 +53,8 @@ public class NoteSequence implements Serializable{
 		n.setName(name);
 	}
 
+	public void remove(int index) {
+		this.notes.remove(index);
+	}
+
 }
