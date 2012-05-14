@@ -170,5 +170,13 @@
         android:layout_alignParentLeft="true"
         android:visibility="invisible"
         android:src="@drawable/left_arrow" />
+
+    <ImageView
+        android:id="@+id/keysig_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/slurs_button"
+        android:src="@drawable/b6sharps" />
     
 </RelativeLayout>
