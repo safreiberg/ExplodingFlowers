@@ -20,6 +20,9 @@ public class Note implements Serializable {
 	public double getPitch(){
 		return pitch;
 	}
+	public String getDynamic() {
+		return this.dynamic;
+	}
 	public void setRest(boolean r) {
 		this.rest = r;
 	}

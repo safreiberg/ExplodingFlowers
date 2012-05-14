@@ -32,7 +32,7 @@ import com.MusicalSketches.datarep.Song;
 
 public class EditModeLegacy extends Activity {
 	enum placement_objects {
-		eighth_note, quarter_note, half_note, sharp, flat, natural, eighth_rest, quarter_rest, half_rest
+		eighth_note, quarter_note, half_note, sharp, flat, natural, eighth_rest, quarter_rest, half_rest, pp, p, mp, f, ff, mf
 	}
 
 	enum states {
@@ -50,10 +50,13 @@ public class EditModeLegacy extends Activity {
 	TextView meter_disp;
 	ImageButton trash_button;
 	ImageView clef_image;
+	ImageView gray_cover;
 	ImageView music_score;
 	ImageButton right_button;
 	ImageButton left_button;
 	boolean inNotesMode = true; // false when the rests are showing
+	boolean placingDynamic = false; // only true when the screen is grayed
+									// (that's the plan anyway)
 	public static final int MAX_NOTES_ONSCREEN = 10;
 	Song song = null;
 	states state = states.wait;
@@ -64,7 +67,7 @@ public class EditModeLegacy extends Activity {
 	placement_objects type_selected;
 	View[] notes = new View[MAX_NOTES_ONSCREEN];
 	View[] annotations = new View[MAX_NOTES_ONSCREEN];
-	View[] dynamics = new View[MAX_NOTES_ONSCREEN];
+	View[] dynos = new View[MAX_NOTES_ONSCREEN];
 	int screen_number = 0; // this increments as you screen to the right. min =
 							// 0.
 
@@ -90,6 +93,8 @@ public class EditModeLegacy extends Activity {
 		clef_image = (ImageView) findViewById(R.id.clef_image);
 		right_button = (ImageButton) findViewById(R.id.right_arrow);
 		left_button = (ImageButton) findViewById(R.id.left_arrow);
+		gray_cover = (ImageView) findViewById(R.id.gray_cover);
+		gray_cover.setVisibility(View.INVISIBLE);
 
 		song = (Song) getIntent().getSerializableExtra("song object");
 
@@ -374,6 +379,7 @@ public class EditModeLegacy extends Activity {
 							return true;
 						}
 					}
+					// if we hit an annotation, unclickkk.
 					for (int i = 0; i < annotations.length; i++) {
 						if (annotations[i] == null) {
 							continue;
@@ -389,6 +395,8 @@ public class EditModeLegacy extends Activity {
 					}
 					// placing a piece.
 					group.removeView(selected_view);
+					// I'm sure these three for loops are important. But I don't
+					// know why, and I'm not gonna mess up a good thing.
 					for (int i = 0; i < notes.length; i++) {
 						if (notes[i] == selected_view) {
 							notes[i] = null;
@@ -399,12 +407,44 @@ public class EditModeLegacy extends Activity {
 							annotations[i] = null;
 						}
 					}
+					for (int i = 0; i < dynos.length; i++) {
+						if (dynos[i] == selected_view) {
+							dynos[i] = null;
+						}
+					}
+					// //////////
 					if (type_selected == placement_objects.flat
 							|| type_selected == placement_objects.natural
 							|| type_selected == placement_objects.sharp) {
 						state = states.wait;
 						unclickAll();
 						return true;
+					} else if (placingDynamic) {
+						// need to find a location for the dynamic on the bottom
+						// based on proximity of the click.
+						placingDynamic = false;
+						if (event_y > 280 || event_y < 250) {
+							state = states.wait;
+							unclickAll();
+							// outside the boundary.
+							return true;
+						} else {
+							// loc is where we determine the dynamic to probably
+							// have been placed.
+							// thus we add it...
+							int loc = (int) ((event_x - 30) / 60 - 1);
+							params.topMargin = 264;
+							params.leftMargin = 30 + (loc + 1) * 60;
+							Log.d("",
+									"Placing a dynamic: "
+											+ selected_view.getTag());
+							dynos[loc] = selected_view;
+							selected_view.setLayoutParams(params);
+							group.addView(selected_view);
+							state = states.wait;
+							unclickAll();
+							return true;
+						}
 					} else {
 						// need to find a note spot
 						if (event_y > 257 || event_y < 120) {
@@ -484,7 +524,26 @@ public class EditModeLegacy extends Activity {
 									.setBackgroundColor(Color.argb(50, 255,
 											230, 100)); // more neutral yellow
 							selected_view = annotations[i];
-							type_selected = placement_objects.sharp;
+							type_selected = (placement_objects) selected_view
+									.getTag();
+							state = states.selected_to_place;
+							return true;
+						}
+					}
+					for (int i = 0; i < dynos.length; i++) {
+						if (dynos[i] == null) {
+							continue;
+						}
+						Rect hitSpace = new Rect();
+						dynos[i].getHitRect(hitSpace);
+						if (hit(x, y, hitSpace)) {
+							// hit!
+							((ImageView) dynos[i]).setBackgroundColor(Color
+									.argb(50, 255, 230, 100)); // more neutral
+																// yellow
+							selected_view = dynos[i];
+							type_selected = (placement_objects) selected_view
+									.getTag();
 							state = states.selected_to_place;
 							return true;
 						}
@@ -542,10 +601,10 @@ public class EditModeLegacy extends Activity {
 		for (View v : annotations) {
 			group.removeView(v);
 		}
-		for (View v : dynamics) {
+		for (View v : dynos) {
 			group.removeView(v);
 		}
-		this.dynamics = new View[MAX_NOTES_ONSCREEN];
+		this.dynos = new View[MAX_NOTES_ONSCREEN];
 		this.notes = new View[MAX_NOTES_ONSCREEN];
 		this.annotations = new View[MAX_NOTES_ONSCREEN];
 
@@ -670,6 +729,40 @@ public class EditModeLegacy extends Activity {
 				state = states.wait;
 				unclickAll();
 			}
+			String dynString = n.getDynamic();
+			if (dynString != null) {
+				if (dynString.equals("pp")) {
+					selected_view = select(R.drawable.pp);
+					selected_view.setTag(placement_objects.pp);
+				} else if (dynString.equals("p")) {
+					selected_view = select(R.drawable.p);
+					selected_view.setTag(placement_objects.p);
+				} else if (dynString.equals("mp")) {
+					selected_view = select(R.drawable.mp);
+					selected_view.setTag(placement_objects.mp);
+				} else if (dynString.equals("mf")) {
+					selected_view = select(R.drawable.mf);
+					selected_view.setTag(placement_objects.mf);
+				} else if (dynString.equals("f")) {
+					selected_view = select(R.drawable.f);
+					selected_view.setTag(placement_objects.f);
+				} else if (dynString.equals("ff")) {
+					selected_view = select(R.drawable.ff);
+					selected_view.setTag(placement_objects.ff);
+				}
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = 264;
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				dynos[g] = selected_view;
+				selected_view.setLayoutParams(params);
+				group.removeView(selected_view);
+				group.addView(selected_view);
+				state = states.wait;
+				unclickAll();
+			}
 			g++;
 			if (n.isRest()) {
 				inNotesMode = true;
@@ -688,6 +781,8 @@ public class EditModeLegacy extends Activity {
 			middle_note.setImageResource(R.drawable.quarter_rest);
 			right_note.setImageResource(R.drawable.half_rest);
 		}
+		gray_cover.setVisibility(View.INVISIBLE);
+		placingDynamic = false;
 		sharp_button.setImageResource(R.drawable.sharp_transparent);
 		flat_button.setImageResource(R.drawable.flat_transparent);
 		natural_button.setImageResource(R.drawable.natural_transparent);
@@ -699,6 +794,11 @@ public class EditModeLegacy extends Activity {
 			}
 		}
 		for (View v : annotations) {
+			if (v != null) {
+				v.setBackgroundColor(Color.TRANSPARENT);
+			}
+		}
+		for (View v : dynos) {
 			if (v != null) {
 				v.setBackgroundColor(Color.TRANSPARENT);
 			}
@@ -758,7 +858,9 @@ public class EditModeLegacy extends Activity {
 	}
 
 	public void savePage() {
-		Log.d("", "save page called, song is null? : " + Boolean.toString(song == null));
+		Log.d("",
+				"save page called, song is null? : "
+						+ Boolean.toString(song == null));
 		if (song != null) {
 		} else {
 			song = new Song();
@@ -864,6 +966,27 @@ public class EditModeLegacy extends Activity {
 			public void onClick(DialogInterface dialog, int item) {
 				((Button) findViewById(R.id.dynamics_button))
 						.setText(dynamics[item]);
+				gray_cover.setVisibility(View.VISIBLE);
+				placingDynamic = true;
+				if (dynamics[item].equals("pp")) {
+					selected_view = select(R.drawable.pp);
+					selected_view.setTag(placement_objects.pp);
+				} else if (dynamics[item].equals("p")) {
+					selected_view = select(R.drawable.p);
+					selected_view.setTag(placement_objects.p);
+				} else if (dynamics[item].equals("mp")) {
+					selected_view = select(R.drawable.mp);
+					selected_view.setTag(placement_objects.mp);
+				} else if (dynamics[item].equals("mf")) {
+					selected_view = select(R.drawable.mf);
+					selected_view.setTag(placement_objects.mf);
+				} else if (dynamics[item].equals("f")) {
+					selected_view = select(R.drawable.f);
+					selected_view.setTag(placement_objects.f);
+				} else if (dynamics[item].equals("ff")) {
+					selected_view = select(R.drawable.ff);
+					selected_view.setTag(placement_objects.ff);
+				}
 			}
 		});
 
@@ -898,12 +1021,31 @@ public class EditModeLegacy extends Activity {
 		double length = 0;
 		String name = "";
 		String annotation = "";
+		String dynamic = null;
 		if (notes[i] != null) {
 			if (annotations[i] != null) {
 				if (((ImageView) annotations[i]).getTag() == placement_objects.flat) {
 					annotation = "flat";
 				} else if (((ImageView) annotations[i]).getTag() == placement_objects.sharp) {
 					annotation = "sharp";
+				}
+			}
+			if (dynos[i] != null) {
+				placement_objects tag = (placement_objects) (dynos[i]).getTag();
+				Log.d("", "there should be a dynamic here: "
+						+ tag);
+				if (tag == placement_objects.pp) {
+					dynamic = "pp";
+				} else if (tag == placement_objects.p) {
+					dynamic = "p";
+				} else if (tag == placement_objects.mp) {
+					dynamic = "mp";
+				} else if (tag == placement_objects.mf) {
+					dynamic = "mf";
+				} else if (tag == placement_objects.f) {
+					dynamic = "f";
+				} else if (tag == placement_objects.ff) {
+					dynamic = "ff";
 				}
 			}
 			name = NoteFrequencies.staff_notes[0] + annotation;
@@ -939,6 +1081,8 @@ public class EditModeLegacy extends Activity {
 				n.setRest(true);
 				Log.d("", "Setting rest = true, note: " + i);
 			}
+			n.setDynamic(dynamic);
+			Log.d("", "Just set dynamic: " + dynamic);
 			return n;
 		}
 		return null;

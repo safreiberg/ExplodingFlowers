@@ -292,6 +292,33 @@ public class PlaybackModeLegacy extends Activity {
 				group.removeView(img);
 				group.addView(img);
 			}
+			img = new ImageView(getApplicationContext());
+			String dynString = n.getDynamic();
+			if (dynString != null) {
+				if (dynString.equals("pp")) {
+					img.setImageResource(R.drawable.pp);
+				} else if (dynString.equals("p")) {
+					img.setImageResource(R.drawable.p);
+				} else if (dynString.equals("mp")) {
+					img.setImageResource(R.drawable.mp);
+				} else if (dynString.equals("mf")) {
+					img.setImageResource(R.drawable.mf);
+				} else if (dynString.equals("f")) {
+					img.setImageResource(R.drawable.f);
+				} else if (dynString.equals("ff")) {
+					img.setImageResource(R.drawable.ff);
+				}
+				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+						RelativeLayout.LayoutParams.WRAP_CONTENT,
+						RelativeLayout.LayoutParams.WRAP_CONTENT);
+				params.topMargin = 264;
+				img.setVisibility(0);
+				params.leftMargin = 20 + (g + 1) * 60;
+				// remove any previous annotation there
+				img.setLayoutParams(params);
+				group.removeView(img);
+				group.addView(img);
+			}
 			if (img != null) {
 				this.annotations[g] = img;
 			}
@@ -300,7 +327,7 @@ public class PlaybackModeLegacy extends Activity {
 	}
 
 	public enum playback_menu_options {
-		CLOSE, EDIT,
+		CLOSE, EDIT
 	}
 
 	@Override
@@ -310,7 +337,7 @@ public class PlaybackModeLegacy extends Activity {
 		inflater.inflate(R.menu.playback_menu, menu);
 		return true;
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 	}
@@ -326,7 +353,8 @@ public class PlaybackModeLegacy extends Activity {
 		case R.id.playback_edit:
 			Toast.makeText(this, "As you wish...", Toast.LENGTH_SHORT).show();
 			audioTrack.stop();
-			Intent intent = new Intent(PlaybackModeLegacy.this, EditModeLegacy.class);
+			Intent intent = new Intent(PlaybackModeLegacy.this,
+					EditModeLegacy.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			intent.putExtra("song object", song);
 			startActivity(intent);

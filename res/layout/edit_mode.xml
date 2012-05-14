@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:background="#FFFFFF"
     android:id="@+id/edit_layout"
-    android:layout_height="fill_parent" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF" >
 
     <ImageButton
         android:id="@+id/left_note"
@@ -42,13 +42,13 @@
 
     <Button
         android:id="@+id/rests_button"
-        android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_toRightOf="@id/more_notes"
         android:scaleType="center"
-        android:text="@string/rests" />
+        android:text="@string/rests"
+        android:textColor="#000000" />
 
     <ImageButton
         android:id="@+id/record_button"
@@ -58,117 +58,128 @@
         android:contentDescription="@string/record_icon"
         android:scaleType="center"
         android:src="@drawable/record_icon" />
-    
+
     <Button
         android:id="@+id/dynamics_button"
         android:layout_width="wrap_content"
-        android:textColor="#000000"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:contentDescription="@string/record_icon"
-        android:scaleType="center"
         android:layout_alignParentBottom="true"
-        android:textSize="25dp"
+        android:layout_alignParentLeft="true"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="30dp"
-        android:text="@string/dynamic_default" />
-    
-    <ImageButton 
+        android:contentDescription="@string/record_icon"
+        android:scaleType="center"
+        android:text="@string/dynamic_default"
+        android:textColor="#000000"
+        android:textSize="25dp" />
+
+    <ImageButton
         android:id="@+id/slurs_button"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:contentDescription="@string/slurs_button"
-        android:layout_toRightOf="@id/dynamics_button"
-        android:src="@drawable/slur_transparent"
-        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:layout_alignParentBottom="true" />
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/dynamics_button"
+        android:contentDescription="@string/slurs_button"
+        android:src="@drawable/slur_transparent" />
 
     <ImageView
+        android:id="@+id/music_score"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/music_score"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/music_score"
         android:src="@drawable/musicbd" />
-    
-    <ImageView 
+
+    <ImageView
+        android:id="@+id/clef_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/clef_image"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:src="@drawable/bass_clef"/>
+        android:src="@drawable/bass_clef" />
 
-    <TextView 
+    <TextView
+        android:id="@+id/meter_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/meter_text"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="50dp"
         android:textColor="#000000" />
-    
-    <ImageButton 
+
+    <ImageButton
         android:id="@+id/sharp_button"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:contentDescription="@string/sharp_button"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/slurs_button"
-        android:src="@drawable/sharp_transparent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_alignParentBottom="true" />
-    <ImageButton 
+        android:contentDescription="@string/sharp_button"
+        android:src="@drawable/sharp_transparent" />
+
+    <ImageButton
         android:id="@+id/flat_button"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:contentDescription="@string/flat_button"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/sharp_button"
-        android:src="@drawable/flat_transparent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_alignParentBottom="true" />
-    <ImageButton 
+        android:contentDescription="@string/flat_button"
+        android:src="@drawable/flat_transparent" />
+
+    <ImageButton
         android:id="@+id/natural_button"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:contentDescription="@string/natural_button"
-        android:layout_toRightOf="@id/flat_button"
-        android:src="@drawable/natural_transparent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_alignParentBottom="true" />
-    
+        android:layout_toRightOf="@id/flat_button"
+        android:contentDescription="@string/natural_button"
+        android:src="@drawable/natural_transparent" />
+
     <ImageButton
         android:id="@+id/trash_can"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:contentDescription="@string/natural_button"
-        android:src="@drawable/trash"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
+        android:contentDescription="@string/natural_button"
+        android:src="@drawable/trash" />
 
     <ImageButton
         android:id="@+id/right_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:visibility="invisible"
         android:layout_alignParentRight="true"
-        android:src="@drawable/right_arrow" />
-    
+        android:layout_centerVertical="true"
+        android:src="@drawable/right_arrow"
+        android:visibility="invisible" />
+
     <ImageButton
         android:id="@+id/left_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:visibility="invisible"
-        android:src="@drawable/left_arrow" />
-    
+        android:layout_centerVertical="true"
+        android:src="@drawable/left_arrow"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/gray_cover"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/music_score"
+        android:src="@drawable/gray_box" />
+
 </RelativeLayout>
