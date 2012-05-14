@@ -98,14 +98,14 @@ public class EditModeLegacy extends Activity {
 		class left_arrow_button_click implements OnClickListener {
 			@Override
 			public void onClick(View v) {
-				generateScreen(screen_number - 1);
+				generateScreen(screen_number - 1, false);
 			}
 		}
 
 		class right_arrow_button_click implements OnClickListener {
 			@Override
 			public void onClick(View v) {
-				generateScreen(screen_number + 1);
+				generateScreen(screen_number + 1, false);
 			}
 		}
 
@@ -140,7 +140,6 @@ public class EditModeLegacy extends Activity {
 				// this should just toggle the images.
 				// it also unclicks everything for safety TODO is this
 				// necessary????
-				unclickAll();
 				state = states.wait;
 				// it also changes its text depending on what's showing.
 				if (rests_button.getText().equals("Rests")) {
@@ -161,6 +160,7 @@ public class EditModeLegacy extends Activity {
 					right_note
 							.setImageResource(R.drawable.half_note_transparent);
 				}
+				unclickAll();
 			}
 		}
 		;
@@ -504,14 +504,18 @@ public class EditModeLegacy extends Activity {
 		;
 
 		music_score.setOnTouchListener(new score_touch());
-		generateScreen(0);
+		generateScreen(0, true);
 	}
 
-	private void generateScreen(int number) {
+	private void generateScreen(int number, boolean opening) {
 		// plan here is to save all the shit onscreen
 		// then redisplay an overlapping note and arrows as necessary.
 		// NB: savePage() must occur before reassigning screen_number
-		this.savePage();
+		if (!opening) {
+			this.savePage();
+		}
+		Log.d("", "generating screen: " + number);
+		Log.d("", "song size: " + this.song.size());
 		Toast.makeText(getApplicationContext(), "Song length: " + song.size(),
 				Toast.LENGTH_SHORT).show();
 		this.screen_number = number;
@@ -570,7 +574,7 @@ public class EditModeLegacy extends Activity {
 				}
 			}
 			if (n.isRest()) {
-				rests_button.performClick();
+				inNotesMode = false;
 			}
 			if (l == 0.125) {
 				left_note.performClick();
@@ -668,7 +672,7 @@ public class EditModeLegacy extends Activity {
 			}
 			g++;
 			if (n.isRest()) {
-				rests_button.performClick();
+				inNotesMode = true;
 			}
 		}
 	}
@@ -744,6 +748,8 @@ public class EditModeLegacy extends Activity {
 
 	@Override
 	public void onBackPressed() {
+		super.onBackPressed();
+		Log.d("", "back pressed, about to savePage");
 		savePage();
 		finish();
 	}
@@ -752,36 +758,11 @@ public class EditModeLegacy extends Activity {
 	public void onPause() {
 		super.onPause();
 		savePage();
-	}
-
-	@Deprecated
-	// Replace with savePage
-	public void save() {
-		// put information into song
-		if (song != null) {
-			song = new Song(song.getClef(), song.getMeterTop(),
-					song.getMeterBottom(), song.getTempo(), song.getKey(),
-					song.getTitle(), new Date());
-		} else {
-			song = new Song();
-		}
-		for (int i = 0; i < this.notes.length; i++) {
-			Note n = getNoteFromIndex(i);
-			Log.d("",
-					"note at index: " + i + " is null? "
-							+ Boolean.toString(n == null));
-			if (n != null) {
-				Log.d("", "note at index: " + i + " is " + n.getName());
-				song.addNote(n);
-			}
-		}
-		// put song into return intent
-		Intent i = new Intent();
-		i.putExtra("song object", song);
-		setResult(0, i);
+		finish();
 	}
 
 	public void savePage() {
+		Log.d("", "save page called, song is null? : " + Boolean.toString(song == null));
 		if (song != null) {
 		} else {
 			song = new Song();
@@ -959,6 +940,7 @@ public class EditModeLegacy extends Activity {
 					|| tag == placement_objects.half_rest
 					|| tag == placement_objects.quarter_rest) {
 				n.setRest(true);
+				Log.d("", "Setting rest = true, note: " + i);
 			}
 			return n;
 		}
