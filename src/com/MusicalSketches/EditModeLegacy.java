@@ -748,10 +748,6 @@ public class EditModeLegacy extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		Log.d("", "back pressed, about to savePage");
-		savePage();
-		finish();
 	}
 
 	@Override

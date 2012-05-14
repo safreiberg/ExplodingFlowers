@@ -65,6 +65,8 @@ public class MusicalLibrary extends Activity {
 				Intent next = new Intent(MusicalLibrary.this, EditModeLegacy.class);
 				next.putExtra("song object",
 						library.getSong("" + ((TextView) view).getText()));
+				Song s = library.getSong("" + ((TextView) view).getText());
+				Log.d("", "Opening song: " + s.getTitle() + ", length: " + s.size());
 				startActivityForResult(next, 0);
 			}
 		});
@@ -87,6 +89,7 @@ public class MusicalLibrary extends Activity {
 			Song s = (Song) data.getSerializableExtra("song object");
 			library.remove(s.getTitle());
 			library.addSong(s);
+			Log.d("", "updating song, length: " + s.size());
 			Log.d("", "should have updated song");
 			updateView();
 		} else if (resultCode == 1) {
